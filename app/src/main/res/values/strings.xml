@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ToTabs</string>
+
+    <!-- Strings related to main activity -->
+    <string name="analyze_text">Analyze</string>
+    <string name="library_text">Library</string>
+    <string name="end_text">End</string>
 </resources>
