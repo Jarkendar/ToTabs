@@ -5,4 +5,8 @@
     <string name="analyze_text">Analyze</string>
     <string name="library_text">Library</string>
     <string name="end_text">End</string>
+
+    <!-- Strings related to chooser source activity -->
+    <string name="question_text">What do you want analyze?</string>
+
 </resources>
