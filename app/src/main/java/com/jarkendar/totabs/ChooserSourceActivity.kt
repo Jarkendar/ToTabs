@@ -3,7 +3,7 @@ package com.jarkendar.totabs
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 
-class ChooserSource : AppCompatActivity() {
+class ChooserSourceActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
