@@ -14,5 +14,9 @@ class MainActivity : AppCompatActivity() {
         analyze_button.setOnClickListener {
             startActivity(Intent(applicationContext, ChooserSourceActivity::class.java))
         }
+
+        end_button.setOnClickListener {
+            finish()
+        }
     }
 }
