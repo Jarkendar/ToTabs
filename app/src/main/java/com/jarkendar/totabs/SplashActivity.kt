@@ -10,8 +10,6 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        this.supportActionBar!!.hide()
-
         val intent = Intent(applicationContext, MainActivity::class.java)
         waitAndRun(intent)
     }
