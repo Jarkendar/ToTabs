@@ -14,6 +14,7 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
 
         choose_file_image.setOnClickListener {
             val fileChooser = FileChooser(this@ChooserSourceActivity)
+            fileChooser.setExtensions(EXTENSIONS_LIST)
             fileChooser.setFileListener(this).showDialog()
         }
     }
@@ -22,5 +23,9 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
         Log.d("*****", file.absolutePath)
         Log.d("*****", file.name)
         Log.d("*****", file.length().toString())
+    }
+
+    companion object {
+        val EXTENSIONS_LIST = arrayOf(".3gp", ".mp3", ".flac", ".mid", ".wav", ".ogg", ".mp4")
     }
 }

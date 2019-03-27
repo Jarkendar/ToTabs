@@ -24,7 +24,7 @@ public class FileChooser(private val activity: Activity) {
     private var dialog: Dialog = Dialog(activity)
     private var currentPath: File? = null
 
-    private var extension: String? = null
+    private var extensions: Array<String>? = null
     private var fileListener: FileSelectedListener? = null
 
     init {
@@ -43,8 +43,8 @@ public class FileChooser(private val activity: Activity) {
         refresh(Environment.getExternalStorageDirectory())
     }
 
-    public fun setExtension(extension: String) {
-        this.extension = extension.toLowerCase()
+    public fun setExtensions(extensions: Array<String>) {
+        this.extensions = extensions
     }
 
     public fun setFileListener(fileListener: FileSelectedListener): FileChooser {
@@ -69,10 +69,10 @@ public class FileChooser(private val activity: Activity) {
                 if (!it.isDirectory) {
                     if (!it.canRead()) {
                         return@FileFilter false
-                    } else if (extension == null) {
+                    } else if (extensions == null) {
                         return@FileFilter true
                     } else {
-                        return@FileFilter it.name.toLowerCase().endsWith(extension!!)
+                        return@FileFilter extensions!!.any { item -> it.name.toLowerCase().endsWith(item) }
                     }
                 } else {
                     return@FileFilter false
