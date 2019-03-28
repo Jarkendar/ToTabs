@@ -113,7 +113,10 @@ public class FileChooser(private val activity: Activity) {
      */
     private fun getChosenFile(fileChosen: String): File {
         return if (fileChosen == PARENT_DIR) {
-            currentPath!!.parentFile
+            if (currentPath!!.parentFile.canRead()) {
+                currentPath!!.parentFile
+            }
+            currentPath!!.parentFile.parentFile
         } else {
             File(currentPath, fileChosen)
         }
