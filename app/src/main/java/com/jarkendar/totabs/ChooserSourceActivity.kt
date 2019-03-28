@@ -41,6 +41,11 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
             RECORD_REQUEST -> {
                 audioFileUri = data!!.data
                 Log.d("****", audioFileUri!!.toString())
+                if (audioFileUri != null) {
+                    runMusicPreview(File(audioFileUri.toString()))
+                } else {
+                    //todo info about problem
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -99,14 +104,19 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
     }
 
     override fun fileSelected(file: File) {
-        Log.d("*****", file.absolutePath)
-        Log.d("*****", file.name)
-        Log.d("*****", file.length().toString())
+        runMusicPreview(file)
+    }
+
+    private fun runMusicPreview(file: File) {
+        val intent = Intent(this, MusicPreviewActivity::class.java)
+        intent.putExtra(EXTRA_FILE, file)
+        startActivity(intent)
     }
 
     companion object {
         private val EXTENSIONS_LIST = arrayOf(".3gp", ".mp3", ".flac", ".mid", ".wav", ".ogg", ".mp4")
         private val PERMISSION_REQUEST_EXTERNAL_STORAGE = 2
         private val RECORD_REQUEST = 3
+        public val EXTRA_FILE = "extra_file"
     }
 }
