@@ -79,17 +79,6 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            PERMISSION_REQUEST_RECORD_AUDIO -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return
-            }
             PERMISSION_REQUEST_EXTERNAL_STORAGE -> {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
@@ -117,7 +106,6 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
 
     companion object {
         private val EXTENSIONS_LIST = arrayOf(".3gp", ".mp3", ".flac", ".mid", ".wav", ".ogg", ".mp4")
-        private val PERMISSION_REQUEST_RECORD_AUDIO = 1
         private val PERMISSION_REQUEST_EXTERNAL_STORAGE = 2
         private val RECORD_REQUEST = 3
     }
