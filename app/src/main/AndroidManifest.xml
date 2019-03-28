@@ -3,7 +3,6 @@
     package="com.jarkendar.totabs">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />-->
 
     <application
         android:allowBackup="true"
@@ -12,11 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ChooserSourceActivity"
-            android:screenOrientation="landscape"
-            android:parentActivityName=".MainActivity">
-
-        </activity>
+        <activity
+            android:name=".MusicPreviewActivity"
+            android:parentActivityName=".ChooserSourceActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".ChooserSourceActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape"></activity>
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="landscape">
