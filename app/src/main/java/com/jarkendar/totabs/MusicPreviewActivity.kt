@@ -17,6 +17,9 @@ class MusicPreviewActivity : AppCompatActivity() {
 
         musicFileHolder = MusicFileHolder(intent.extras.getSerializable(ChooserSourceActivity.EXTRA_FILE) as File, applicationContext)
 
+        basic_info_textView.text = musicFileHolder.getBasicInfo()
+        advance_info_textView.text = musicFileHolder.getAdvanceInfo()
+
         start_intent_button.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 type = "audio/*"
