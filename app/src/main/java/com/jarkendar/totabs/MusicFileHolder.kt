@@ -28,13 +28,13 @@ class MusicFileHolder(public val musicFile: File, private val context: Context) 
         val metadataRetriever = MediaMetadataRetriever()
         metadataRetriever.setDataSource(musicFile.absolutePath)
 
-        getBasicInfo(metadataRetriever)
+        pullBasicInfo(metadataRetriever)
         if (mediaExtractor.trackCount > 0) {
-            getAdvanceInfo(metadataRetriever, mediaExtractor.getTrackFormat(0))
+            pullAdvanceInfo(metadataRetriever, mediaExtractor.getTrackFormat(0))
         }
     }
 
-    private fun getBasicInfo(metadataRetriever: MediaMetadataRetriever) {
+    private fun pullBasicInfo(metadataRetriever: MediaMetadataRetriever) {
         title = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
         artist = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
         author = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR)
@@ -43,7 +43,7 @@ class MusicFileHolder(public val musicFile: File, private val context: Context) 
         duration = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
     }
 
-    private fun getAdvanceInfo(metadataRetriever: MediaMetadataRetriever, mediaFormat: MediaFormat) {
+    private fun pullAdvanceInfo(metadataRetriever: MediaMetadataRetriever, mediaFormat: MediaFormat) {
         mimeType = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
         bitRate = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)
         modifyDate = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
