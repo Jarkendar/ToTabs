@@ -14,20 +14,22 @@
     <string name="extend_text_default">This is default extend text</string>
     <string name="start_analyze_text">Start Analyze</string>
     <string name="preview_image_description">Preview image</string>
-    <string name="basic_tag_text">Basic information</string>
+    <string name="basic_tag_text">Basic information:</string>
+    <string name="name_text">Name:</string>
     <string name="title_text">Title:</string>
     <string name="artist_text">Artist:</string>
     <string name="author_text">Author:</string>
     <string name="album_text">Album:</string>
     <string name="genre_text">Genre:</string>
     <string name="duration_text">Duration:</string>
-    <string name="advance_tag_text">Advance information</string>
+    <string name="advance_tag_text">Advance information:</string>
     <string name="mime_type_text">Mime type:</string>
     <string name="bit_rate_text">Bit-rate:</string>
     <string name="modify_date_text">Modify date:</string>
     <string name="sample_rate_text">Sample rate:</string>
     <string name="channel_count_text">Channel count:</string>
     <string name="number_of_tracks_text">Number of tracks:</string>
+    <string name="empty_text">empty</string>
 
 
 </resources>
