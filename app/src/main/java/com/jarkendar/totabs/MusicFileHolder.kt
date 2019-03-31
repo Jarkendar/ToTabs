@@ -20,7 +20,7 @@ class MusicFileHolder(public val musicFile: File, private val context: Context) 
     private var modifyDate: String = ""
     private var sampleRate: String = ""
     private var channelCount: String = ""
-    private var numberOfTrack: String = ""
+    private var numberOfTracks: String = ""
 
     init {
         val mediaExtractor = MediaExtractor()
@@ -57,7 +57,7 @@ class MusicFileHolder(public val musicFile: File, private val context: Context) 
         } else {
             ""
         }
-        numberOfTrack = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_NUM_TRACKS)
+        numberOfTracks = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_NUM_TRACKS)
     }
 
 }
