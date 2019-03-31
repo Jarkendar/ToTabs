@@ -30,7 +30,7 @@ class MusicFileHolder(public val musicFile: File, private val context: Context) 
 
         getBasicInfo(metadataRetriever)
         if (mediaExtractor.trackCount > 0) {
-            getExtendInfo(metadataRetriever, mediaExtractor.getTrackFormat(0))
+            getAdvanceInfo(metadataRetriever, mediaExtractor.getTrackFormat(0))
         }
     }
 
@@ -43,7 +43,7 @@ class MusicFileHolder(public val musicFile: File, private val context: Context) 
         duration = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
     }
 
-    private fun getExtendInfo(metadataRetriever: MediaMetadataRetriever, mediaFormat: MediaFormat) {
+    private fun getAdvanceInfo(metadataRetriever: MediaMetadataRetriever, mediaFormat: MediaFormat) {
         mimeType = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
         bitRate = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)
         modifyDate = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
