@@ -9,4 +9,11 @@
     <!-- Strings related to chooser source activity -->
     <string name="question_text">What do you want analyze?</string>
 
+    <!-- Strings related to music preview activity -->
+    <string name="basic_text_default">This is default basic text</string>
+    <string name="extend_text_default">This is default extend text</string>
+    <string name="start_analyze_text">Start Analyze</string>
+    <string name="preview_image_description">Preview image</string>
+
+
 </resources>
