@@ -6,7 +6,7 @@ import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import java.io.File
 
-class MusicFileHolder(private val musicFile: File, private val context: Context) {
+class MusicFileHolder(public val musicFile: File, private val context: Context) {
 
     private lateinit var title: String
     private lateinit var artist: String
@@ -21,7 +21,6 @@ class MusicFileHolder(private val musicFile: File, private val context: Context)
     private var sampleRate: String = ""
     private var channelCount: String = ""
     private var numberOfTrack: String = ""
-
 
     init {
         val mediaExtractor = MediaExtractor()
@@ -43,7 +42,6 @@ class MusicFileHolder(private val musicFile: File, private val context: Context)
         genre = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE)
         duration = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
     }
-
 
     private fun getExtendInfo(metadataRetriever: MediaMetadataRetriever, mediaFormat: MediaFormat) {
         mimeType = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
