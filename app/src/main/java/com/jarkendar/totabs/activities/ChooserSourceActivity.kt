@@ -1,6 +1,8 @@
 package com.jarkendar.totabs.activities
 
 import android.Manifest
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -29,7 +31,7 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
                 fileChooser.setExtensions(EXTENSIONS_LIST)
                 fileChooser.setFileListener(this).showDialog()
             } else {
-                //todo info about not permission
+                createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.not_write_external_permission_text), applicationContext.getString(R.string.understand_accept_button)).show()
             }
         }
 
@@ -46,11 +48,19 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
                 if (audioFileUri != null) {
                     runMusicPreview(File(audioFileUri.toString()))
                 } else {
-                    //todo info about problem
+                    createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.problem_with_record_file_text), applicationContext.getString(R.string.understand_accept_button)).show()
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun createDialog(title: String, text: String, positiveButtonText: String): Dialog {
+        return AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(text)
+                .setPositiveButton(positiveButtonText) { dialog, which -> }
+                .create()
     }
 
     private fun checkPermission(permission: String, id: Int): Boolean {
