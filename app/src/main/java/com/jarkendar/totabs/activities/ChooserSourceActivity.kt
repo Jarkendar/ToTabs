@@ -1,8 +1,6 @@
 package com.jarkendar.totabs.activities
 
 import android.Manifest
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -12,6 +10,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import com.jarkendar.totabs.R
+import com.jarkendar.totabs.activities.chooser.DialogCreator
 import com.jarkendar.totabs.activities.chooser.FileChooser
 import kotlinx.android.synthetic.main.activity_chooser_source.*
 import java.io.File
@@ -40,7 +39,7 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
     }
 
     private fun showNotPermissionDialog() {
-        createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.not_write_external_permission_text), applicationContext.getString(R.string.understand_accept_button)).show()
+        DialogCreator(this).createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.not_write_external_permission_text), applicationContext.getString(R.string.understand_accept_button)).show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -50,26 +49,18 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
                 if (audioFileUri != null) {
                     runMusicPreview(File(audioFileUri.toString()))
                 } else {
-                    createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.problem_with_record_file_text), applicationContext.getString(R.string.understand_accept_button)).show()
+                    DialogCreator(this).createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.problem_with_record_file_text), applicationContext.getString(R.string.understand_accept_button)).show()
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun createDialog(title: String, text: String, positiveButtonText: String): Dialog {
-        return AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(text)
-                .setPositiveButton(positiveButtonText) { dialog, which -> }
-                .create()
-    }
-
     private fun checkPermission(permission: String, id: Int): Boolean {
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.why_need_write_external_storage_text), applicationContext.getString(R.string.understand_accept_button))
+                DialogCreator(this).createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.why_need_write_external_storage_text), applicationContext.getString(R.string.understand_accept_button))
             } else {
                 ActivityCompat.requestPermissions(this, arrayOf(permission), id)
             }

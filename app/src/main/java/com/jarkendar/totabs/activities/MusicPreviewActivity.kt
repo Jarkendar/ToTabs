@@ -6,6 +6,7 @@ import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.jarkendar.totabs.R
+import com.jarkendar.totabs.activities.chooser.DialogCreator
 import com.jarkendar.totabs.analyzer.MusicFileHolder
 import kotlinx.android.synthetic.main.activity_music_preview.*
 import java.io.File
@@ -32,7 +33,7 @@ class MusicPreviewActivity : AppCompatActivity() {
             if (intent.resolveActivity(packageManager) != null) {
                 startActivity(intent)
             } else {
-                //todo info with user hasnt music player
+                DialogCreator(this).createDialog(applicationContext.getString(R.string.title_text), applicationContext.getString(R.string.phone_has_none_music_player_text), applicationContext.getString(R.string.understand_accept_button)).show()
             }
         }
         start_analyze_button.setOnClickListener {
