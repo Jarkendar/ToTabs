@@ -1,4 +1,4 @@
-package com.jarkendar.totabs
+package com.jarkendar.totabs.activities.chooser
 
 import android.app.Activity
 import android.app.Dialog

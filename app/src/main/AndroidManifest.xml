@@ -23,15 +23,15 @@
         </provider>
 
         <activity
-            android:name=".MusicPreviewActivity"
-            android:parentActivityName=".ChooserSourceActivity"
+            android:name=".activities.MusicPreviewActivity"
+            android:parentActivityName=".activities.ChooserSourceActivity"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".ChooserSourceActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".activities.ChooserSourceActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

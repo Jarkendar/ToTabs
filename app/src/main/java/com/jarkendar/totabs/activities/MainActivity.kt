@@ -1,8 +1,9 @@
-package com.jarkendar.totabs
+package com.jarkendar.totabs.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.jarkendar.totabs.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

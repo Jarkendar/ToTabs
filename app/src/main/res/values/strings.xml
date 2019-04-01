@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">ToTabs</string>
 
+    <!-- Strings related to dialog -->
+    <string name="dialog_info_title_text">Information</string>
+    <string name="not_write_external_permission_text">You did not allow for write external storage. Application can not see files.</string>
+    <string name="problem_with_record_file_text">Problem with record file. Application can not read it.</string>
+    <string name="understand_accept_button">I understand</string>
+    <string name="why_need_write_external_storage_text">Browse files required write external storage.</string>
+    <string name="phone_has_none_music_player_text">The phone has no music player. Application can not play the file.</string>
+
     <!-- Strings related to main activity -->
     <string name="analyze_text">Analyze</string>
     <string name="library_text">Library</string>
