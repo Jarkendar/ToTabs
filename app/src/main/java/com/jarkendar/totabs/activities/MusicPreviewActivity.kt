@@ -1,10 +1,12 @@
-package com.jarkendar.totabs
+package com.jarkendar.totabs.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.jarkendar.totabs.R
+import com.jarkendar.totabs.analyzer.MusicFileHolder
 import kotlinx.android.synthetic.main.activity_music_preview.*
 import java.io.File
 

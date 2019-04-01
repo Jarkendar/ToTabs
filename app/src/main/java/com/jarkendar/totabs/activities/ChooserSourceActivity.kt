@@ -1,4 +1,4 @@
-package com.jarkendar.totabs
+package com.jarkendar.totabs.activities
 
 import android.Manifest
 import android.content.Intent
@@ -10,6 +10,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.jarkendar.totabs.R
+import com.jarkendar.totabs.activities.chooser.FileChooser
 import kotlinx.android.synthetic.main.activity_chooser_source.*
 import java.io.File
 

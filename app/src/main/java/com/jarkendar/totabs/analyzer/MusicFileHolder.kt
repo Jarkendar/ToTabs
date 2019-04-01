@@ -1,9 +1,10 @@
-package com.jarkendar.totabs
+package com.jarkendar.totabs.analyzer
 
 import android.content.Context
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
+import com.jarkendar.totabs.R
 import java.io.File
 
 class MusicFileHolder(public val musicFile: File, private val context: Context) {

@@ -1,8 +1,9 @@
-package com.jarkendar.totabs
+package com.jarkendar.totabs.activities
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import com.jarkendar.totabs.R
 
 class SplashActivity : AppCompatActivity() {
 
