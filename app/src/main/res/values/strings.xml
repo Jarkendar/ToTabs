@@ -12,6 +12,7 @@
     <string name="not_write_external_permission_text">You did not allow for write external storage. Application can not see files.</string>
     <string name="problem_with_record_file_text">Problem with record file. Application can not read it.</string>
     <string name="understand_accept_button">I understand</string>
+    <string name="why_need_write_external_storage_text">Browse files required write external storage.</string>
 
     <!-- Strings related to music preview activity -->
     <string name="basic_text_default">This is default basic text</string>

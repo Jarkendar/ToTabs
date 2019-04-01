@@ -11,7 +11,6 @@ import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.jarkendar.totabs.R
 import com.jarkendar.totabs.activities.chooser.FileChooser
 import kotlinx.android.synthetic.main.activity_chooser_source.*
@@ -31,7 +30,7 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
                 fileChooser.setExtensions(EXTENSIONS_LIST)
                 fileChooser.setFileListener(this).showDialog()
             } else {
-                createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.not_write_external_permission_text), applicationContext.getString(R.string.understand_accept_button)).show()
+                showNotPermissionDialog()
             }
         }
 
@@ -40,11 +39,14 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
         }
     }
 
+    private fun showNotPermissionDialog() {
+        createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.not_write_external_permission_text), applicationContext.getString(R.string.understand_accept_button)).show()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             RECORD_REQUEST -> {
                 audioFileUri = data!!.data
-                Log.d("****", audioFileUri!!.toString())
                 if (audioFileUri != null) {
                     runMusicPreview(File(audioFileUri.toString()))
                 } else {
@@ -64,51 +66,29 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
     }
 
     private fun checkPermission(permission: String, id: Int): Boolean {
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                        permission)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            permission)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.why_need_write_external_storage_text), applicationContext.getString(R.string.understand_accept_button))
             } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        arrayOf(permission),
-                        id)
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+                ActivityCompat.requestPermissions(this, arrayOf(permission), id)
             }
         } else {
-            // Permission has already been granted
             return true
         }
         return false
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             PERMISSION_REQUEST_EXTERNAL_STORAGE -> {
-                // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    choose_file_image.callOnClick()
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    showNotPermissionDialog()
                 }
                 return
             }
-            // Add other 'when' lines to check for other
-            // permissions this app might request.
             else -> {
                 // Ignore all other requests.
             }
