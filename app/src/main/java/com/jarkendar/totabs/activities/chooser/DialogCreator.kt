@@ -10,7 +10,7 @@ class DialogCreator(private val context: Context) {
         return AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(text)
-                .setPositiveButton(positiveButtonText) { dialog, which -> }
+                .setPositiveButton(positiveButtonText) { _, _ -> }
                 .create()
     }
 }
