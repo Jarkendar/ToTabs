@@ -60,6 +60,22 @@ class MusicFileHolder(public val musicFile: File, private val context: Context) 
                 ?: ""
     }
 
+    public fun getMIMEType(): String {
+        val metadataRetriever = MediaMetadataRetriever()
+        metadataRetriever.setDataSource(musicFile.absolutePath)
+        return metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE) ?: ""
+    }
+
+    public fun getSampleRate(): Int {
+        val mediaExtractor = MediaExtractor()
+        mediaExtractor.setDataSource(musicFile.absolutePath)
+        return if (mediaExtractor.trackCount > 0) {
+            mediaExtractor.getTrackFormat(0).getInteger(MediaFormat.KEY_SAMPLE_RATE)
+        } else {
+            0
+        }
+    }
+
     //todo bold headers
     public fun getBasicInfo(): String {
         val basicInfo: String = "${context.resources.getString(R.string.basic_tag_text)}\n\n" +
