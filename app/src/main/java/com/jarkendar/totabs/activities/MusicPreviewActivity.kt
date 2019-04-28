@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.jarkendar.totabs.R
 import com.jarkendar.totabs.activities.chooser.DialogCreator
+import com.jarkendar.totabs.analyzer.Analyzer
 import com.jarkendar.totabs.analyzer.MusicFileHolder
 import kotlinx.android.synthetic.main.activity_music_preview.*
 import java.io.File
@@ -38,6 +39,8 @@ class MusicPreviewActivity : AppCompatActivity() {
         }
         start_analyze_button.setOnClickListener {
             //todo start analyze
+            val analyzer = Analyzer(musicFileHolder)
+            analyzer.analyze()
             Log.d("*******", "Click analyze button")
         }
     }
