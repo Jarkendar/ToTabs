@@ -86,6 +86,7 @@
         android:maxHeight="400dp"
         android:minWidth="150dp"
         android:minHeight="200dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/start_analyze_button"
