@@ -15,6 +15,7 @@ import com.jarkendar.totabs.activities.chooser.FileChooser
 import kotlinx.android.synthetic.main.activity_chooser_source.*
 import java.io.File
 
+
 class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListener {
 
     private var audioFileUri: Uri? = null
@@ -47,13 +48,21 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
             RECORD_REQUEST -> {
                 audioFileUri = data!!.data
                 if (audioFileUri != null) {
-                    runMusicPreview(File(audioFileUri.toString()))
+                    runMusicPreview(File(getRealPathFromURI(audioFileUri!!)))
                 } else {
                     DialogCreator(this).createDialog(applicationContext.getString(R.string.dialog_info_title_text), applicationContext.getString(R.string.problem_with_record_file_text), applicationContext.getString(R.string.understand_accept_button)).show()
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun getRealPathFromURI(contentUri: Uri): String {
+        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = managedQuery(contentUri, proj, null, null, null)
+        val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor.moveToFirst()
+        return cursor.getString(column_index)
     }
 
     private fun checkPermission(permission: String, id: Int): Boolean {
