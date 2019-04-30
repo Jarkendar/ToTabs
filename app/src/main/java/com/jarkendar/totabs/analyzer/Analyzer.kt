@@ -38,7 +38,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
 
             do {
                 readFrames = wavfile.readFrames(buffer, bufferSize)
-                fft(buffer, samleRate, partOfSecond)
+                fft(buffer, samleRate)
             } while (readFrames != 0)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -47,7 +47,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         }
     }
 
-    private fun fft(doubleArray: DoubleArray, sampleRate: Long, partOfSecond: Double) {
+    private fun fft(doubleArray: DoubleArray, sampleRate: Long) {
         val doubleFFT_1D = DoubleFFT_1D(doubleArray.size.toLong())
         val fftData = DoubleArray(doubleArray.size * 2)
         for (i in 0 until doubleArray.size) {
@@ -55,12 +55,12 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
             fftData[2 * i + 1] = 0.0
         }
         doubleFFT_1D.realForward(fftData)
-        val maxFrequency = getMaxFrequency(fftData, sampleRate, partOfSecond)
+        val maxFrequency = getMaxFrequency(fftData, sampleRate)
         Log.d("****d****", maxFrequency.toString())
     }
 
 
-    private fun getMaxFrequency(fftArray: DoubleArray, sampleRate: Long, partOfSecond: Double): Double {
+    private fun getMaxFrequency(fftArray: DoubleArray, sampleRate: Long): Double {
         var maxMagnitude = 1.0
         var maxIndex = 0
         for (i in 0 until fftArray.size / 2) {
