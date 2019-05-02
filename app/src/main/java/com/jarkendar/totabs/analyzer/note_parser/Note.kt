@@ -7,4 +7,8 @@ class Note constructor(val name: String, val frequency: Double) {
     override fun toString(): String {
         return "Note(name='$name', frequency=$frequency, amplitude=$amplitude)"
     }
+
+    public fun copy(): Note {
+        return Note(name, frequency)
+    }
 }

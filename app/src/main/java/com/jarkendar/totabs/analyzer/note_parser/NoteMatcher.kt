@@ -23,6 +23,9 @@ class NoteMatcher {
                 minSEIndex = i
             }
         }
-        return notes[minSEIndex]
+
+        val matchNote = notes[minSEIndex].copy()
+        matchNote.amplitude = reference.second
+        return matchNote
     }
 }
