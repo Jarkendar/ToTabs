@@ -1,7 +1,7 @@
 package com.jarkendar.totabs.analyzer
 
 import android.util.Log
-import com.jarkendar.totabs.analyzer.note_parser.NoteSpectreGenerator
+import com.jarkendar.totabs.analyzer.note_parser.NoteMatcher
 import com.jarkendar.totabs.analyzer.wavfiles.WavFile
 import com.jarkendar.totabs.analyzer.wavfiles.WavFileException
 import org.jtransforms.fft.DoubleFFT_1D
@@ -13,7 +13,7 @@ import kotlin.collections.ArrayList
 class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
 
     private val TAG = "*******"
-    private var noteSpectreGenerator: NoteSpectreGenerator = NoteSpectreGenerator()
+    private val noteMatcher = NoteMatcher()
 
     public fun analyze() {
         val mimeString = musicFileHolder.getMIMEType()
@@ -59,7 +59,8 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         }
         doubleFFT_1D.realForward(fftData)
         val maxFrequency = getMaxFrequency(fftData, sampleRate)
-        getMaxFrequenciesBaseOnHarmonic(fftData, sampleRate)
+        val bestFreqsPairSet = getMaxFrequenciesBaseOnHarmonic(fftData, sampleRate)
+        Log.d("***recognizeNote***", noteMatcher.match(bestFreqsPairSet).toString())
         Log.d("****d****", maxFrequency.toString())
     }
 
