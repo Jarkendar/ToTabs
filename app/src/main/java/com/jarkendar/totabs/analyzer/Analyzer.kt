@@ -1,6 +1,7 @@
 package com.jarkendar.totabs.analyzer
 
 import android.util.Log
+import com.jarkendar.totabs.analyzer.note_parser.NoteSpectreGenerator
 import com.jarkendar.totabs.analyzer.wavfiles.WavFile
 import com.jarkendar.totabs.analyzer.wavfiles.WavFileException
 import org.jtransforms.fft.DoubleFFT_1D
@@ -12,6 +13,7 @@ import kotlin.collections.ArrayList
 class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
 
     private val TAG = "*******"
+    private var noteSpectreGenerator: NoteSpectreGenerator = NoteSpectreGenerator()
 
     public fun analyze() {
         val mimeString = musicFileHolder.getMIMEType()
@@ -25,7 +27,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
             val wavfile = WavFile.openWavFile(musicFileHolder.musicFile)
             wavfile.display()
 
-            val partOfSecond = 0.3
+            val partOfSecond = 1.0
 
             val channel = wavfile.numChannels
             val frames = wavfile.numFrames
@@ -95,7 +97,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
             var sum = 0.0
             for (h in 1..HARMONIC_TO_ANALYZE) {
                 if (i * h < amplitudes.size) {
-                    sum += amplitudes[i * h].second
+                    sum += (amplitudes[i * h].second / h)
                 }
             }
             result.add(i, Pair(amplitudes[i].first, sum))
