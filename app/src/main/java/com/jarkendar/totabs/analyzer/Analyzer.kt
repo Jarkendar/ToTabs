@@ -14,12 +14,15 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
 
     private val TAG = "*******"
     private val noteMatcher = NoteMatcher()
+    private lateinit var track: Track
 
     public fun analyze() {
+        track = Track(100)
         val mimeString = musicFileHolder.getMIMEType()
         if (mimeString.contains("wav")) {
             wavAnalyze()
         }
+        Log.d(TAG, track.toString())
     }
 
     private fun wavAnalyze() {
@@ -60,7 +63,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         doubleFFT_1D.realForward(fftData)
         val maxFrequency = getMaxFrequency(fftData, sampleRate)
         val bestFreqsPairSet = getMaxFrequenciesBaseOnHarmonic(fftData, sampleRate)
-        Log.d("***recognizeNote***", noteMatcher.match(bestFreqsPairSet).toString())
+        track.appendSound(noteMatcher.match(bestFreqsPairSet))
         Log.d("****d****", maxFrequency.toString())
     }
 
@@ -76,7 +79,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         sortArrayOfPair(enhancePairs)
         Log.d(TAG, Arrays.toString(resultPairs))
         Log.d(TAG, Arrays.toString(enhancePairs))
-        return resultPairs
+        return enhancePairs
     }
 
     private fun countAmplitudes(fftArray: DoubleArray, sampleRate: Long): Array<Pair<Double, Double>> {//Pair(frequency, amplitude)
