@@ -42,7 +42,7 @@ class MusicPreviewActivity : AppCompatActivity() {
         start_analyze_button.setOnClickListener {
             //todo start analyze
             val analyzer = Analyzer(musicFileHolder)
-            analyzer.analyze()
+            analyzer.analyze(beats_per_minute_editText.text.toString().toInt())
             Log.d("*******", "Click analyze button")
         }
 

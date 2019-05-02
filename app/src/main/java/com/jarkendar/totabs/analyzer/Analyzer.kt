@@ -16,8 +16,8 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
     private val noteMatcher = NoteMatcher()
     private lateinit var track: Track
 
-    public fun analyze() {
-        track = Track(100)
+    public fun analyze(beatsPerMinute: Int) {
+        track = Track(beatsPerMinute)
         val mimeString = musicFileHolder.getMIMEType()
         if (mimeString.contains("wav")) {
             wavAnalyze()
