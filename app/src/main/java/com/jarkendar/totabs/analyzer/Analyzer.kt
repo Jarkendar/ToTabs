@@ -23,9 +23,12 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         val noteAndPart = countMinNoteAndPartOfSecond(musicFileHolder.getSampleRate(), beatsPerMinute)
         track = Track(beatsPerMinute, noteAndPart.first, noteAndPart.second)
         val mimeString = musicFileHolder.getMIMEType()
-        if (mimeString.contains("wav")) {
-            wavAnalyze(track.minNoteDuration)
+        when {
+            mimeString.contains("wav") -> wavAnalyze(track.minNoteDuration)
         }
+
+        Log.d(TAG, track.toString())
+        TrackCompressor().compressTrack(track)
         Log.d(TAG, track.toString())
     }
 
