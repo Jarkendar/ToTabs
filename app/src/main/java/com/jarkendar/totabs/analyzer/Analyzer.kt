@@ -1,6 +1,7 @@
 package com.jarkendar.totabs.analyzer
 
 import android.util.Log
+import com.jarkendar.totabs.analyzer.note_parser.NoteLength
 import com.jarkendar.totabs.analyzer.note_parser.NoteMatcher
 import com.jarkendar.totabs.analyzer.wavfiles.WavFile
 import com.jarkendar.totabs.analyzer.wavfiles.WavFileException
@@ -26,7 +27,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         Log.d(TAG, track.toString())
     }
 
-    private fun countMinNoteAndPartOfSecond(sampleRate: Int, beatsPerMinute: Int): Pair<Double, Double> {
+    private fun countMinNoteAndPartOfSecond(sampleRate: Int, beatsPerMinute: Int): Pair<NoteLength, Double> {
         var noteInSecond = beatsPerMinute / SECONDS_IN_MINUTE //start from full notes in second
         var frequencyRecognize = sampleRate / 2.0
 
@@ -35,21 +36,24 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
             noteInSecond /= 2.0
         }
         val nearestNote = calcNearestGreaterNoteValue(noteInSecond)
-        val partOfSecond = nearestNote * SECONDS_IN_MINUTE / beatsPerMinute
+        val partOfSecond = nearestNote.length * SECONDS_IN_MINUTE / beatsPerMinute
         Log.d(TAG, "$nearestNote, $partOfSecond")
 
         return Pair(nearestNote, partOfSecond)
     }
 
-
-    private fun calcNearestGreaterNoteValue(noteValue: Double): Double {
+    private fun calcNearestGreaterNoteValue(noteValue: Double): NoteLength {
         var value = 1.0
         while (value / 2.0 >= noteValue) {
             value /= 2.0
         }
-        return value
+        for (noteLength in NoteLength.values()) {
+            if (noteLength.length == value) {
+                return noteLength
+            }
+        }
+        return NoteLength.FULL
     }
-
 
     private fun wavAnalyze(partDuration: Double) {
         try {
