@@ -6,18 +6,22 @@ import java.util.*
 
 class Track(val beatsPerMinute: Int, val minNote: NoteLength, val minNoteDuration: Double) {
 
-    private val listOfSound = LinkedList<Note>()
+    private val listOfSound = LinkedList<Pair<Int, Note>>()
 
     public fun appendSound(note: Note) {
         note.length = minNote
-        listOfSound.addLast(note)
+        listOfSound.addLast(Pair(listOfSound.size, note))
     }
 
-    public fun getTrack(): Array<Note> {
+    public fun getTrack(): LinkedList<Pair<Int, Note>> {
+        return listOfSound
+    }
+
+    public fun getTrackArray(): Array<Pair<Int, Note>> {
         return listOfSound.toTypedArray()
     }
 
     override fun toString(): String {
-        return "Track(beatsPerMinute=$beatsPerMinute, ${minNote.name}, $minNoteDuration, listOfSound=${Arrays.toString(listOfSound.toTypedArray())})"
+        return "Track(beatsPerMinute=$beatsPerMinute, ${minNote.name}, $minNoteDuration, ${listOfSound.size}, listOfSound=${Arrays.toString(listOfSound.toTypedArray())})"
     }
 }
