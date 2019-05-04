@@ -1,6 +1,7 @@
 package com.jarkendar.totabs.analyzer.note_parser
 
 import android.util.Log
+import com.jarkendar.totabs.analyzer.TrackCompressor
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -74,7 +75,7 @@ class NoteMatcher {
             }
         }
         if (minSEIndex == -1) {
-            return Note("null", 0.0)
+            return Note(TrackCompressor.NULL_NOTE, 0.0)
         }
         val matchNote = notes[minSEIndex].copy()
         matchNote.amplitude = reference.second
