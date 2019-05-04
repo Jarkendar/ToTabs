@@ -17,6 +17,8 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
     private val noteMatcher = NoteMatcher()
     private lateinit var track: Track
 
+    //todo divide counting to threads
+
     public fun analyze(beatsPerMinute: Int) {
         val noteAndPart = countMinNoteAndPartOfSecond(musicFileHolder.getSampleRate(), beatsPerMinute)
         track = Track(beatsPerMinute, noteAndPart.first, noteAndPart.second)
