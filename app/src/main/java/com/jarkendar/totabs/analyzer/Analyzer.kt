@@ -17,27 +17,51 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
     private lateinit var track: Track
 
     public fun analyze(beatsPerMinute: Int) {
-        track = Track(beatsPerMinute)
+        val noteAndPart = countMinNoteAndPartOfSecond(musicFileHolder.getSampleRate(), beatsPerMinute)
+        track = Track(beatsPerMinute, noteAndPart.first, noteAndPart.second)
         val mimeString = musicFileHolder.getMIMEType()
         if (mimeString.contains("wav")) {
-            wavAnalyze()
+            wavAnalyze(track.minNoteDuration)
         }
         Log.d(TAG, track.toString())
     }
 
-    private fun wavAnalyze() {
+    private fun countMinNoteAndPartOfSecond(sampleRate: Int, beatsPerMinute: Int): Pair<Double, Double> {
+        var noteInSecond = beatsPerMinute / SECONDS_IN_MINUTE //start from full notes in second
+        var frequencyRecognize = sampleRate / 2.0
+
+        while (frequencyRecognize > THRESHOLD_OF_FREQUENCY && noteInSecond > EIGHT_NOTE) {
+            frequencyRecognize /= 2.0
+            noteInSecond /= 2.0
+        }
+        val nearestNote = calcNearestGreaterNoteValue(noteInSecond)
+        val partOfSecond = nearestNote * SECONDS_IN_MINUTE / beatsPerMinute
+        Log.d(TAG, "$nearestNote, $partOfSecond")
+
+        return Pair(nearestNote, partOfSecond)
+    }
+
+
+    private fun calcNearestGreaterNoteValue(noteValue: Double): Double {
+        var value = 1.0
+        while (value / 2.0 >= noteValue) {
+            value /= 2.0
+        }
+        return value
+    }
+
+
+    private fun wavAnalyze(partDuration: Double) {
         try {
             val wavfile = WavFile.openWavFile(musicFileHolder.musicFile)
             wavfile.display()
-
-            val partOfSecond = 1.0
 
             val channel = wavfile.numChannels
             val frames = wavfile.numFrames
             val samleRate = wavfile.sampleRate
 
             Log.d(TAG, "$channel, $frames, $samleRate, ${frames / samleRate}")
-            val bufferSize = (partOfSecond * samleRate).toInt()
+            val bufferSize = (partDuration * samleRate).toInt()
             Log.d(TAG, "$bufferSize")
             val buffer = DoubleArray(bufferSize * channel)
             var readFrames: Int
@@ -184,5 +208,8 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         private val LOWER_GUITAR_THRESHOLD = 75.0
         private val DIFFERENCE_TONE = Math.pow(2.0, 1.0 / 7.0)
         private val ENHANCE_POWER = 0.5
+        private const val SECONDS_IN_MINUTE = 60.0
+        private const val THRESHOLD_OF_FREQUENCY = 1400.0
+        private const val EIGHT_NOTE = 1.0 / 8.0
     }
 }
