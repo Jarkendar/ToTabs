@@ -52,11 +52,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         while (value / 2.0 >= noteValue) {
             value /= 2.0
         }
-        for (noteLength in NoteLength.values()) {
-            if (noteLength.length == value) {
-                return noteLength
-            }
-        }
+        NoteLength.values().forEach { noteLength -> if (noteLength.length == value) return noteLength }
         return NoteLength.FULL
     }
 

@@ -11,10 +11,9 @@ class TrackCompressor {
     public fun compressTrack(track: Track) {
         val trackArray = track.getTrackArray()
         val noteToDelete = LinkedList<Pair<Int, Note>>()
-        for (i in 0 until trackArray.size) {
-            if (trackArray[i].second.name == NULL_NOTE || trackArray[i].second.amplitude < MIN_AMPLITUDE) {
-                noteToDelete.addFirst(trackArray[i])
-            }
+        trackArray.forEach { pair ->
+            if (pair.second.name == NULL_NOTE || pair.second.amplitude < MIN_AMPLITUDE)
+                noteToDelete.addFirst(pair)
         }
         track.getTrack().removeAll(noteToDelete)
     }
