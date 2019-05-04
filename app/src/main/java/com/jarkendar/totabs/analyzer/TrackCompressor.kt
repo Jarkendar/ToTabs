@@ -5,10 +5,14 @@ import java.util.*
 
 class TrackCompressor {
 
+    public fun compressTrack(track: Track) {
+        removeUnnecessarySounds(track)
+    }
+
     /**
      * Method delete NULL and too weak notes from track list
      */
-    public fun compressTrack(track: Track) {
+    private fun removeUnnecessarySounds(track: Track) {
         val trackArray = track.getTrackArray()
         val noteToDelete = LinkedList<Pair<Int, Note>>()
         trackArray.forEach { pair ->
