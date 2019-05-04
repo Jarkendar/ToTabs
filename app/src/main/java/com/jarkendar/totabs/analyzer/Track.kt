@@ -3,7 +3,7 @@ package com.jarkendar.totabs.analyzer
 import com.jarkendar.totabs.analyzer.note_parser.Note
 import java.util.*
 
-class Track constructor(val beatsPerMinute: Int) {
+class Track(val beatsPerMinute: Int, val minNote: Double, val minNoteDuration: Double) {
 
     private val listOfSound = LinkedList<Note>()
 
