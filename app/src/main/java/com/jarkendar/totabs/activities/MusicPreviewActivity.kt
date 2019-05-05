@@ -109,6 +109,6 @@ class MusicPreviewActivity : AppCompatActivity() {
 
     companion object {
         private const val MIN_BEATS_PER_MINUTE = 1
-        private const val MAX_BEATS_PER_MINUTE = 180
+        private const val MAX_BEATS_PER_MINUTE = 240
     }
 }

@@ -28,7 +28,7 @@ class TrackCompressor {
         val trackArray = track.getTrackArray()
         val joinedTruck = LinkedList<Pair<Int, Note>>()
 
-        val maxJoining = (1.0 / track.minNote.length).toInt()
+        val maxJoining = (1.0 / (track.minNote.length / NoteLength.FULL.length)).toInt()
         val joiningOptions = prepareJoinOptions(maxJoining)
 
         var currentIndex = 0
@@ -44,7 +44,7 @@ class TrackCompressor {
                     joined = true
                     break
                 } else {
-                    break
+                    continue
                 }
             }
             if (!joined) {
@@ -69,8 +69,8 @@ class TrackCompressor {
         return when {
             checkIndexesAreNotOrdered(array, toJoin, startPoint) -> false
             checkNamesAreDifference(array, toJoin, startPoint) -> false
-            checkLengthAreDifference(array, toJoin, startPoint) -> false
-            checkAmplitudeIsMonotonic(array, toJoin, startPoint) -> false
+            checkLengthsAreDifference(array, toJoin, startPoint) -> false
+            checkAmplitudesAreNotMonotonic(array, toJoin, startPoint) -> false
             else -> true
         }
     }
@@ -84,12 +84,12 @@ class TrackCompressor {
         return (1 until toJoin).any { i -> array[startPoint + i].second.name != referenceName }
     }
 
-    private fun checkLengthAreDifference(array: Array<Pair<Int, Note>>, toJoin: Int, startPoint: Int): Boolean {
+    private fun checkLengthsAreDifference(array: Array<Pair<Int, Note>>, toJoin: Int, startPoint: Int): Boolean {
         val referenceLength = array[startPoint].second.length
         return (1 until toJoin).any { i -> array[startPoint + i].second.length != referenceLength }
     }
 
-    private fun checkAmplitudeIsMonotonic(array: Array<Pair<Int, Note>>, toJoin: Int, startPoint: Int): Boolean {
+    private fun checkAmplitudesAreNotMonotonic(array: Array<Pair<Int, Note>>, toJoin: Int, startPoint: Int): Boolean {
         return (1 until toJoin).any { i ->
             array[startPoint + i - 1].second.amplitude < array[startPoint + i].second.amplitude &&
                     abs(array[startPoint + i - 1].second.amplitude - array[startPoint + i].second.amplitude) > array[startPoint + i - 1].second.amplitude * AMPLITUDE_MARGIN
