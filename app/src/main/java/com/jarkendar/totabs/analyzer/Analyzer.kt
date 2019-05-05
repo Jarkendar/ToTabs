@@ -36,10 +36,10 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
     }
 
     private fun calcPairNoteLengthAndPartOfSecond(sampleRate: Int, beatsPerMinute: Int): Pair<NoteLength, Double> {
-        var noteInSecond = beatsPerMinute / SECONDS_IN_MINUTE //start from full notes in second
+        var noteInSecond = beatsPerMinute / SECONDS_IN_MINUTE * NoteLength.FULL.length//start from full notes in second
         var frequencyRecognizing = sampleRate / 2.0
 
-        while (frequencyRecognizing > THRESHOLD_OF_FREQUENCY && noteInSecond > EIGHT_NOTE) {
+        while (frequencyRecognizing > THRESHOLD_OF_FREQUENCY && noteInSecond > THRESHOLD_NOTE) {
             frequencyRecognizing /= 2.0
             noteInSecond /= 2.0
         }
@@ -51,7 +51,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
     }
 
     private fun calcNearestGreaterNoteLength(noteValue: Double): NoteLength {
-        var lengthValue = 1.0
+        var lengthValue = NoteLength.FULL.length
         while (lengthValue / 2.0 >= noteValue) {
             lengthValue /= 2.0
         }
@@ -185,6 +185,6 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         private const val ENHANCE_POWER = 0.5
         private const val SECONDS_IN_MINUTE = 60.0
         private const val THRESHOLD_OF_FREQUENCY = 1400.0
-        private const val EIGHT_NOTE = 1.0 / 8.0
+        private val THRESHOLD_NOTE = NoteLength.EIGHTH.length
     }
 }
