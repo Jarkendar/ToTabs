@@ -85,16 +85,23 @@ class MusicFileHolder(public val musicFile: File, private val context: Context) 
                 "${context.resources.getString(R.string.author_text)} @$author@\n" +
                 "${context.resources.getString(R.string.album_text)} @$album@\n" +
                 "${context.resources.getString(R.string.genre_text)} @$genre@\n" +
-                "${context.resources.getString(R.string.duration_text)} @$duration@"//todo correct time format
+                "${context.resources.getString(R.string.duration_text)} @${createTimeString(duration.toLong())}@"
         return basicInfo.replace("@@", context.applicationContext.getString(R.string.empty_text)).replace("@", "")
+    }
+
+    private fun createTimeString(time: Long): String {
+        val minutes = time / (60 * 1000)
+        val seconds = time % (60 * 1000) / 1000
+        val milliseconds = time % 1000
+        return String.format("%01d:%02d.%01d", minutes, seconds, milliseconds)
     }
 
     public fun getAdvanceInfo(): String {
         val advanceInfo: String = "${context.resources.getString(R.string.advance_tag_text)}\n\n" +
                 "${context.resources.getString(R.string.mime_type_text)} @$mimeType@\n" +
-                "${context.resources.getString(R.string.bit_rate_text)} @$bitRate@\n" +//todo add units
+                "${context.resources.getString(R.string.bit_rate_text)} @$bitRate@ ${context.resources.getText(R.string.bits_per_second_unit_text)}\n" +//todo change string to fraction and scaling units
                 "${context.resources.getString(R.string.modify_date_text)} @$modifyDate@\n" +
-                "${context.resources.getString(R.string.sample_rate_text)} @$sampleRate@\n" +//todo add units
+                "${context.resources.getString(R.string.sample_rate_text)} @$sampleRate@\n" +
                 "${context.resources.getString(R.string.channel_count_text)} @$channelCount@\n" +
                 "${context.resources.getString(R.string.number_of_tracks_text)} @$numberOfTracks@"
         return advanceInfo.replace("@@", context.applicationContext.getString(R.string.empty_text)).replace("@", "")

@@ -40,6 +40,7 @@
     <string name="empty_text">empty</string>
     <string name="beats_per_minute_text">BPM:</string>
     <string name="default_beats_per_minute_text">60</string>
+    <string name="bits_per_second_unit_text">bits per seconds</string>
 
 
 </resources>
