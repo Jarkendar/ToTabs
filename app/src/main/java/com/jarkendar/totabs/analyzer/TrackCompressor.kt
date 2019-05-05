@@ -18,10 +18,9 @@ class TrackCompressor {
     private fun removeUnnecessarySounds(track: Track) {
         val trackArray = track.getTrackArray()
         val noteToDelete = LinkedList<Pair<Int, Note>>()
-        trackArray.forEach { pair ->
-            if (pair.second.name == NULL_NOTE || pair.second.amplitude < MIN_AMPLITUDE)
-                noteToDelete.addFirst(pair)
-        }
+        trackArray
+                .filter { pair -> pair.second.name == NULL_NOTE || pair.second.amplitude < MIN_AMPLITUDE }
+                .forEach { pair -> noteToDelete.addFirst(pair) }
         track.getTrack().removeAll(noteToDelete)
     }
 
@@ -30,12 +29,12 @@ class TrackCompressor {
         val joinedTruck = LinkedList<Pair<Int, Note>>()
 
         val maxJoining = (1.0 / track.minNote.length).toInt()
-        val joinOptions = prepareJoinOptions(maxJoining)
+        val joiningOptions = prepareJoinOptions(maxJoining)
 
         var currentIndex = 0
         while (currentIndex < trackArray.size) {
             var joined = false
-            for (option in joinOptions) {
+            for (option in joiningOptions) {
                 if (trackArray.size - currentIndex < option) {
                     continue
                 }
@@ -56,8 +55,8 @@ class TrackCompressor {
         track.setListOfSound(joinedTruck)
     }
 
-    private fun prepareJoinOptions(joining: Int): Array<Int> {
-        var joining = joining
+    private fun prepareJoinOptions(maxJoining: Int): Array<Int> {
+        var joining = maxJoining
         val numbers = LinkedList<Int>()
         while (joining > 1) {
             numbers.addLast(joining)
@@ -71,8 +70,8 @@ class TrackCompressor {
             checkIndexesAreNotOrdered(array, toJoin, startPoint) -> false
             checkNamesAreDifference(array, toJoin, startPoint) -> false
             checkLengthAreDifference(array, toJoin, startPoint) -> false
-            checkAmplitudeIsMonotonic(array, toJoin, startPoint) -> true
-            else -> false
+            checkAmplitudeIsMonotonic(array, toJoin, startPoint) -> false
+            else -> true
         }
     }
 
@@ -91,9 +90,9 @@ class TrackCompressor {
     }
 
     private fun checkAmplitudeIsMonotonic(array: Array<Pair<Int, Note>>, toJoin: Int, startPoint: Int): Boolean {
-        return (1 until toJoin).all { i ->
-            array[startPoint + i - 1].second.amplitude >= array[startPoint + i].second.amplitude ||
-                    abs(array[startPoint + i - 1].second.amplitude - array[startPoint + i].second.amplitude) <= array[startPoint + i - 1].second.amplitude * AMPLITUDE_MARGIN
+        return (1 until toJoin).any { i ->
+            array[startPoint + i - 1].second.amplitude < array[startPoint + i].second.amplitude &&
+                    abs(array[startPoint + i - 1].second.amplitude - array[startPoint + i].second.amplitude) > array[startPoint + i - 1].second.amplitude * AMPLITUDE_MARGIN
         }
     }
 
@@ -102,11 +101,8 @@ class TrackCompressor {
         val name = array[startPoint].second.name
         val frequency = array[startPoint].second.frequency
 
-        var sumAmplitudes = 0.0
-        (0 until toJoin).forEach { i -> sumAmplitudes += array[startPoint + i].second.amplitude }
-
         val note = Note(name, frequency)
-        note.amplitude = sumAmplitudes
+        note.amplitude = (0 until toJoin).sumByDouble { i -> array[startPoint + i].second.amplitude }
         note.length = calcNoteLength(toJoin, array[startPoint].second.length)
         return Pair(index, note)
     }
