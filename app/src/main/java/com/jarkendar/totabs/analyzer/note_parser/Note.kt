@@ -10,6 +10,9 @@ class Note constructor(val name: String, val frequency: Double) {
     }
 
     public fun copy(): Note {
-        return Note(name, frequency)
+        val copyNote = Note(name, frequency)
+        copyNote.amplitude = amplitude
+        copyNote.length = length
+        return copyNote
     }
 }
