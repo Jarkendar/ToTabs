@@ -4,6 +4,7 @@ import android.util.Log
 import com.jarkendar.totabs.analyzer.TrackCompressor
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.math.abs
 
 class NoteMatcher {
 
@@ -28,23 +29,20 @@ class NoteMatcher {
         val list = LinkedList<Note>()
         val indexes = HashMap<String, LinkedList<Int>>()
         for (i in 0 until array.size) {
-            if (indexes.containsKey(array[i].name)) {
-                indexes[array[i].name]!!.addFirst(i)
-            } else {
+            if (!indexes.containsKey(array[i].name)) {
                 indexes[array[i].name] = LinkedList()
-                indexes[array[i].name]!!.addFirst(i)
             }
+            indexes[array[i].name]!!.addFirst(i)
         }
 
-        for ((key, value) in indexes) {
-            var sumAmplitude = 0.0
-            val frequency = array[value[0]].frequency
-            for (i in value) {
-                sumAmplitude += array[i].amplitude
-
+        for ((name, linkedList) in indexes) {
+            var sumAmplitudes = 0.0
+            val frequency = array[linkedList.first].frequency
+            for (index in linkedList) {
+                sumAmplitudes += array[index].amplitude
             }
-            val note = Note(key, frequency)
-            note.amplitude = sumAmplitude
+            val note = Note(name, frequency)
+            note.amplitude = sumAmplitudes
             list.addLast(note)
         }
         sortNotesByAmplitude(list)
@@ -58,27 +56,32 @@ class NoteMatcher {
     private fun chooseLowestSEFromNotes(reference: Pair<Double, Double>): Note {
         val notes = noteSpectreGenerator.getNotes()
 
-        var minSE = Double.MAX_VALUE
-        var minSEIndex = -1
-        val lowerBound = reference.first * 0.75
-        val upperBound = reference.first * 1.25
+        var minError = Double.MAX_VALUE
+        var minErrorIndex = -1
+        val lowerBound = reference.first * LOWER_BOUND_MULTIPLIER
+        val upperBound = reference.first * UPPER_BOUND_MULTIPLIER
         for (i in 0 until notes.size) {
             if (notes[i].frequency < lowerBound) {
                 continue
             } else if (notes[i].frequency > upperBound) {
                 break
             }
-            val squareError = Math.pow((reference.first - notes[i].frequency), 2.0)
-            if (minSE > squareError) {
-                minSE = squareError
-                minSEIndex = i
+            val error = abs(reference.first - notes[i].frequency)
+            if (minError > error) {
+                minError = error
+                minErrorIndex = i
             }
         }
-        if (minSEIndex == -1) {
+        if (minErrorIndex == -1) {
             return Note(TrackCompressor.NULL_NOTE, 0.0)
         }
-        val matchNote = notes[minSEIndex].copy()
+        val matchNote = notes[minErrorIndex].copy()
         matchNote.amplitude = reference.second
         return matchNote
+    }
+
+    companion object {
+        private const val LOWER_BOUND_MULTIPLIER = 0.75
+        private const val UPPER_BOUND_MULTIPLIER = 1.25
     }
 }
