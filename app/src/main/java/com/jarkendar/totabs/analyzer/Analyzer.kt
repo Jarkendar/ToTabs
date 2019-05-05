@@ -44,7 +44,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
             noteInSecond /= 2.0
         }
         val nearestNoteLength = calcNearestGreaterNoteLength(noteInSecond)
-        val partOfSecond = nearestNoteLength.length * SECONDS_IN_MINUTE / beatsPerMinute
+        val partOfSecond = (nearestNoteLength.length / NoteLength.FULL.length) * (SECONDS_IN_MINUTE / beatsPerMinute)
         Log.d(TAG, "$nearestNoteLength, $partOfSecond")
 
         return Pair(nearestNoteLength, partOfSecond)
