@@ -28,7 +28,7 @@ public class FileChooser(private val activity: Activity) {
     private var fileListener: FileSelectedListener? = null
 
     init {
-        list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, which, id ->
+        list.onItemClickListener = AdapterView.OnItemClickListener { _, _, which, _ ->
             val fileChosen = list.getItemAtPosition(which) as String
             val chosenFile = getChosenFile(fileChosen)
             if (chosenFile.isDirectory) {

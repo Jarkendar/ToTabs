@@ -68,28 +68,37 @@
         android:text="@string/start_analyze_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.85" />
 
-    <ImageView
-        android:id="@+id/preview_analyze_image"
+    <TextView
+        android:id="@+id/beats_per_minute_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/beats_per_minute_text"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/beats_per_minute_editText"
+        app:layout_constraintEnd_toStartOf="@+id/beats_per_minute_editText"
+        app:layout_constraintTop_toTopOf="@+id/beats_per_minute_editText" />
+
+    <EditText
+        android:id="@+id/beats_per_minute_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:contentDescription="@string/preview_image_description"
-        android:maxWidth="300dp"
-        android:maxHeight="400dp"
-        android:minWidth="150dp"
-        android:minHeight="200dp"
+        android:ems="3"
+        android:inputType="numberSigned"
+        android:text="@string/default_beats_per_minute_text"
+        android:textColor="@color/green"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/start_analyze_button"
+        app:layout_constraintEnd_toStartOf="@+id/start_analyze_button"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:color/holo_green_light" />
+        app:layout_constraintVertical_bias="0.85" />
 
 </android.support.constraint.ConstraintLayout>
