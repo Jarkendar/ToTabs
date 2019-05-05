@@ -16,11 +16,12 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
     private val TAG = "*******"
     private val noteMatcher = NoteMatcher()
     private lateinit var track: Track
+    private var doubleFFT_1D: Pair<Int, DoubleFFT_1D>? = null
 
     //todo divide counting to threads
 
     public fun analyze(beatsPerMinute: Int) {
-        val noteAndPart = countMinNoteAndPartOfSecond(musicFileHolder.getSampleRate(), beatsPerMinute)
+        val noteAndPart = calcPairNoteLengthAndPartOfSecond(musicFileHolder.getSampleRate(), beatsPerMinute)
         track = Track(beatsPerMinute, noteAndPart.first, noteAndPart.second)
         val mimeString = musicFileHolder.getMIMEType()
         when {
@@ -32,49 +33,43 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         Log.d(TAG, track.toString())
     }
 
-    private fun countMinNoteAndPartOfSecond(sampleRate: Int, beatsPerMinute: Int): Pair<NoteLength, Double> {
+    private fun calcPairNoteLengthAndPartOfSecond(sampleRate: Int, beatsPerMinute: Int): Pair<NoteLength, Double> {
         var noteInSecond = beatsPerMinute / SECONDS_IN_MINUTE //start from full notes in second
-        var frequencyRecognize = sampleRate / 2.0
+        var frequencyRecognizing = sampleRate / 2.0
 
-        while (frequencyRecognize > THRESHOLD_OF_FREQUENCY && noteInSecond > EIGHT_NOTE) {
-            frequencyRecognize /= 2.0
+        while (frequencyRecognizing > THRESHOLD_OF_FREQUENCY && noteInSecond > EIGHT_NOTE) {
+            frequencyRecognizing /= 2.0
             noteInSecond /= 2.0
         }
-        val nearestNote = calcNearestGreaterNoteValue(noteInSecond)
-        val partOfSecond = nearestNote.length * SECONDS_IN_MINUTE / beatsPerMinute
-        Log.d(TAG, "$nearestNote, $partOfSecond")
+        val nearestNoteLength = calcNearestGreaterNoteLength(noteInSecond)
+        val partOfSecond = nearestNoteLength.length * SECONDS_IN_MINUTE / beatsPerMinute
+        Log.d(TAG, "$nearestNoteLength, $partOfSecond")
 
-        return Pair(nearestNote, partOfSecond)
+        return Pair(nearestNoteLength, partOfSecond)
     }
 
-    private fun calcNearestGreaterNoteValue(noteValue: Double): NoteLength {
-        var value = 1.0
-        while (value / 2.0 >= noteValue) {
-            value /= 2.0
+    private fun calcNearestGreaterNoteLength(noteValue: Double): NoteLength {
+        var lengthValue = 1.0
+        while (lengthValue / 2.0 >= noteValue) {
+            lengthValue /= 2.0
         }
-        NoteLength.values().forEach { noteLength -> if (noteLength.length == value) return noteLength }
+        NoteLength.values().forEach { noteLength -> if (noteLength.length == lengthValue) return noteLength }
         return NoteLength.FULL
     }
 
     private fun wavAnalyze(partDuration: Double) {
         try {
-            val wavfile = WavFile.openWavFile(musicFileHolder.musicFile)
-            wavfile.display()
+            val wavFile = WavFile.openWavFile(musicFileHolder.musicFile)
+            wavFile.display()
 
-            val channel = wavfile.numChannels
-            val frames = wavfile.numFrames
-            val samleRate = wavfile.sampleRate
-
-            Log.d(TAG, "$channel, $frames, $samleRate, ${frames / samleRate}")
-            val bufferSize = (partDuration * samleRate).toInt()
+            Log.d(TAG, "$wavFile.numChannels, $wavFile.numFrames, $wavFile.sampleRate, ${wavFile.numFrames / wavFile.sampleRate}")
+            val bufferSize = (partDuration * wavFile.sampleRate).toInt()
             Log.d(TAG, "$bufferSize")
-            val buffer = DoubleArray(bufferSize * channel)
-            var readFrames: Int
+            val buffer = DoubleArray(bufferSize * wavFile.numChannels)
 
-            do {
-                readFrames = wavfile.readFrames(buffer, bufferSize)
-                fft(buffer, samleRate)
-            } while (readFrames != 0)
+            while (wavFile.readFrames(buffer, bufferSize) != 0) {
+                fft(buffer, wavFile.sampleRate)
+            }
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: WavFileException) {
@@ -83,57 +78,56 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
     }
 
     private fun fft(doubleArray: DoubleArray, sampleRate: Long) {
-        val doubleFFT_1D = DoubleFFT_1D(doubleArray.size.toLong())
+        if (doubleFFT_1D == null || doubleFFT_1D!!.first != doubleArray.size) {
+            doubleFFT_1D = Pair(doubleArray.size, DoubleFFT_1D(doubleArray.size.toLong()))
+        }
         val fftData = DoubleArray(doubleArray.size * 2)
         for (i in 0 until doubleArray.size) {
-            fftData[2 * i] = doubleArray[i]
-            fftData[2 * i + 1] = 0.0
+            fftData[i * 2] = doubleArray[i]
+            fftData[i * 2 + 1] = 0.0
         }
-        doubleFFT_1D.realForward(fftData)
-        val maxFrequency = getMaxFrequency(fftData, sampleRate)
-        val bestFreqsPairSet = getMaxFrequenciesBaseOnHarmonic(fftData, sampleRate)
-        track.appendSound(noteMatcher.match(bestFreqsPairSet))
-        Log.d("****d****", maxFrequency.toString())
+        doubleFFT_1D!!.second.realForward(fftData)
+        val bestPairsFrequencyAmplitude = getBestFrequenciesWithAmplitude(fftData, sampleRate)
+        track.appendSound(noteMatcher.match(bestPairsFrequencyAmplitude))
     }
 
     /**
      * Return Array of Pair(frequency, weighted sum harmonic amplitudes)
      */
-    private fun getMaxFrequenciesBaseOnHarmonic(fftArray: DoubleArray, sampleRate: Long): Array<Pair<Double, Double>> {
-        val amplitudes = countAmplitudes(fftArray, sampleRate)
-        val harmonicSum = countWeightedSumHarmonic(amplitudes)
+    private fun getBestFrequenciesWithAmplitude(fftArray: DoubleArray, sampleRate: Long): Array<Pair<Double, Double>> {
+        val frequenciesWithAmplitudes = calculateFrequenciesWithAmplitudes(fftArray, sampleRate)
+        val harmonicSum = calculateWeightedSumHarmonic(frequenciesWithAmplitudes)
         sortArrayOfPair(harmonicSum)
         val resultPairs = cutBestFirst(harmonicSum)
-        val enhancePairs = enhanceCloseTone(resultPairs)
+        val enhancePairs = enhanceCloseTones(resultPairs)
         sortArrayOfPair(enhancePairs)
         Log.d(TAG, Arrays.toString(resultPairs))
         Log.d(TAG, Arrays.toString(enhancePairs))
         return enhancePairs
     }
 
-    private fun countAmplitudes(fftArray: DoubleArray, sampleRate: Long): Array<Pair<Double, Double>> {//Pair(frequency, amplitude)
-        val amplitudes = ArrayList<Pair<Double, Double>>(fftArray.size / 2)
+    private fun calculateFrequenciesWithAmplitudes(fftArray: DoubleArray, sampleRate: Long): Array<Pair<Double, Double>> {//Pair(frequency, amplitude)
+        val frequenciesWithAmplitudes = ArrayList<Pair<Double, Double>>(fftArray.size / 2)
+        val frequencyMultiplier = 8.0 * (sampleRate.toDouble() / fftArray.size)
         for (i in 0 until fftArray.size / 2) {
-            val re = fftArray[2 * i]
-            val im = fftArray[2 * i + 1]
-            val freq = i * 8.0 * (sampleRate.toDouble() / fftArray.size)
-            if (freq in LOWER_BOUND_HUMAN_PERCEPT_HZ..UPPER_BOUND_HUMAN_PERCEPT_HZ && freq >= LOWER_GUITAR_THRESHOLD) {
-                amplitudes.add(Pair(freq, Math.sqrt(re * re + im * im)))
+            val frequency = i * frequencyMultiplier
+            if (frequency in LOWER_BOUND_HUMAN_PERCEPT_HZ..UPPER_BOUND_HUMAN_PERCEPT_HZ && frequency >= LOWER_GUITAR_THRESHOLD) {
+                val real = fftArray[2 * i]
+                val imaginary = fftArray[2 * i + 1]
+                frequenciesWithAmplitudes.add(Pair(frequency, Math.sqrt(real * real + imaginary * imaginary)))
             }
         }
-        return amplitudes.toTypedArray()
+        return frequenciesWithAmplitudes.toTypedArray()
     }
 
-    private fun countWeightedSumHarmonic(amplitudes: Array<Pair<Double, Double>>): Array<Pair<Double, Double>> {
-        val result = ArrayList<Pair<Double, Double>>(amplitudes.size)
-        for (i in 0 until amplitudes.size) {
+    private fun calculateWeightedSumHarmonic(frequenciesWithAmplitudes: Array<Pair<Double, Double>>): Array<Pair<Double, Double>> {
+        val result = ArrayList<Pair<Double, Double>>(frequenciesWithAmplitudes.size)
+        for (i in 0 until frequenciesWithAmplitudes.size) {
             var sum = 0.0
-            for (h in 1..HARMONIC_TO_ANALYZE) {
-                if (i * h < amplitudes.size) {
-                    sum += (amplitudes[i * h].second / h)
-                }
-            }
-            result.add(i, Pair(amplitudes[i].first, sum))
+            (1..HARMONIC_TO_ANALYZE)
+                    .filter { harmonicNumber -> i * harmonicNumber < frequenciesWithAmplitudes.size }
+                    .forEach { harmonicNumber -> sum += (frequenciesWithAmplitudes[i * harmonicNumber].second / harmonicNumber) }
+            result.add(i, Pair(frequenciesWithAmplitudes[i].first, sum))
         }
         return result.toTypedArray()
     }
@@ -144,23 +138,19 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
     private fun sortArrayOfPair(array: Array<Pair<Double, Double>>) {
         array.sortWith(kotlin.Comparator { o1, o2 ->
             val compareValue = -compareValues(o1.second, o2.second)
-            if (compareValue != 0) {
-                return@Comparator compareValue
+            return@Comparator if (compareValue != 0) {
+                compareValue
             } else {
-                return@Comparator compareValues(o1.first, o2.first)
+                compareValues(o1.first, o2.first)
             }
         })
     }
 
-    private fun cutBestFirst(array: Array<Pair<Double, Double>>): Array<Pair<Double, Double>> {
-        val result = ArrayList<Pair<Double, Double>>(BEST_FIRST)
-        for (i in 0 until if (BEST_FIRST <= array.size) BEST_FIRST else array.size) {
-            result.add(i, array[i])
-        }
-        return result.toTypedArray()
+    private fun cutBestFirst(sortedArray: Array<Pair<Double, Double>>): Array<Pair<Double, Double>> {
+        return sortedArray.toList().subList(0, BEST_FIRST).toTypedArray()
     }
 
-    private fun enhanceCloseTone(array: Array<Pair<Double, Double>>): Array<Pair<Double, Double>> {
+    private fun enhanceCloseTones(array: Array<Pair<Double, Double>>): Array<Pair<Double, Double>> {
         val values = DoubleArray(array.size)
         val result = ArrayList<Pair<Double, Double>>(BEST_FIRST)
         for (i in 0 until array.size) {
@@ -171,9 +161,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
                 }
             }
         }
-        for (i in 0 until array.size) {
-            result.add(Pair(array[i].first, values[i]))
-        }
+        (0 until array.size).forEach { result.add(Pair(array[it].first, values[it])) }
         return result.toTypedArray()
     }
 
@@ -185,34 +173,14 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         }
     }
 
-    private fun getMaxFrequency(fftArray: DoubleArray, sampleRate: Long): Double {
-        var maxMagnitude = 1.0
-        var maxIndex = 0
-        for (i in 0 until fftArray.size / 2) {
-            val re = fftArray[2 * i]
-            val im = fftArray[2 * i + 1]
-            val magnitude = Math.sqrt(re * re + im * im)
-            if (magnitude > maxMagnitude) {
-                maxMagnitude = magnitude
-                maxIndex = i
-            }
-        }
-        Log.d(TAG, "$maxIndex, $maxMagnitude, ${fftArray.size}")
-        return maxIndex * 8.0 * (sampleRate.toDouble() / fftArray.size)
-    }
-
-    private fun printArray(doubleArray: DoubleArray) {
-        Log.d("****doubleArray****", Arrays.toString(doubleArray))
-    }
-
     companion object {
-        private val HARMONIC_TO_ANALYZE = 6
-        private val BEST_FIRST = 6
-        private val UPPER_BOUND_HUMAN_PERCEPT_HZ = 20_000.0
-        private val LOWER_BOUND_HUMAN_PERCEPT_HZ = 20.0
-        private val LOWER_GUITAR_THRESHOLD = 75.0
+        private const val HARMONIC_TO_ANALYZE = 6
+        private const val BEST_FIRST = 6
+        private const val UPPER_BOUND_HUMAN_PERCEPT_HZ = 20_000.0
+        private const val LOWER_BOUND_HUMAN_PERCEPT_HZ = 20.0
+        private const val LOWER_GUITAR_THRESHOLD = 75.0
         private val DIFFERENCE_TONE = Math.pow(2.0, 1.0 / 7.0)
-        private val ENHANCE_POWER = 0.5
+        private const val ENHANCE_POWER = 0.5
         private const val SECONDS_IN_MINUTE = 60.0
         private const val THRESHOLD_OF_FREQUENCY = 1400.0
         private const val EIGHT_NOTE = 1.0 / 8.0
