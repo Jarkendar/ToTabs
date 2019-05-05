@@ -1,6 +1,7 @@
 package com.jarkendar.totabs.activities
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
@@ -42,7 +43,9 @@ class MusicPreviewActivity : AppCompatActivity() {
         start_analyze_button.setOnClickListener {
             //todo start analyze
             val analyzer = Analyzer(musicFileHolder)
-            analyzer.analyze(beats_per_minute_editText.text.toString().toInt())
+            analyzer.beatsPerMinute = beats_per_minute_editText.text.toString().toInt()
+            val analyzerThread = AnalyzerThread(this, analyzer)
+            analyzerThread.execute()
             Log.d("*******", "Click analyze button")
         }
 
@@ -67,6 +70,41 @@ class MusicPreviewActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    fun disableViews() {
+        start_analyze_button.isEnabled = false
+        beats_per_minute_editText.isEnabled = false
+    }
+
+    fun enableViews() {
+        start_analyze_button.isEnabled = true
+        beats_per_minute_editText.isEnabled = true
+    }
+
+    private class AnalyzerThread constructor(val musicPreviewActivity: MusicPreviewActivity, val analyzer: Analyzer) : AsyncTask<Void, Void, String>() {
+        override fun onProgressUpdate(vararg values: Void?) {
+            super.onProgressUpdate(*values)
+            //todo progress bar
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            musicPreviewActivity.enableViews()
+            //todo hide progress bar
+        }
+
+        override fun doInBackground(vararg params: Void?): String {
+            analyzer.analyze()
+            return ""//todo return result from analyzer
+        }
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            musicPreviewActivity.disableViews()
+            //todo show progress bar
+            //todo
+        }
     }
 
     companion object {

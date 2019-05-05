@@ -13,6 +13,8 @@ import kotlin.collections.ArrayList
 
 class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
 
+    public var beatsPerMinute: Int = 60
+
     private val TAG = "*******"
     private val noteMatcher = NoteMatcher()
     private lateinit var track: Track
@@ -20,7 +22,7 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
 
     //todo divide counting to threads
 
-    public fun analyze(beatsPerMinute: Int) {
+    public fun analyze() {
         val noteAndPart = calcPairNoteLengthAndPartOfSecond(musicFileHolder.getSampleRate(), beatsPerMinute)
         track = Track(beatsPerMinute, noteAndPart.first, noteAndPart.second)
         val mimeString = musicFileHolder.getMIMEType()
