@@ -8,20 +8,18 @@ class NoteSpectreGenerator {
 
     init {
         val octaveSize = Octave.values().size
-        val baseFrequencies = DoubleArray(octaveSize)
-        val baseNames = Array(octaveSize) { "" }
+        val baseOctave = Array(octaveSize) { Pair("", 0.0) }
 
         for ((i, note) in Octave.values().iterator().withIndex()) {
             notes.add(Note(note.name, note.baseValue))
-            baseNames[i] = note.string
-            baseFrequencies[i] = note.baseValue
+            baseOctave[i] = Pair(note.string, note.baseValue)
         }
 
         var currentTone: Double
         var i = octaveSize
         do {
-            currentTone = baseFrequencies[i % octaveSize] * Math.pow(2.0, (i / octaveSize).toDouble()).toInt()
-            val nextName = generateToneName(baseNames[i % octaveSize], i / octaveSize + 1)
+            currentTone = baseOctave[i % octaveSize].second * Math.pow(2.0, (i / octaveSize).toDouble()).toInt()
+            val nextName = generateToneName(baseOctave[i % octaveSize].first, i / octaveSize + 1)
             notes.add(Note(nextName, currentTone))
             i++
         } while (currentTone < MAX_TONE_FREQUENCY)
