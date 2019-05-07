@@ -12,6 +12,7 @@ import com.jarkendar.totabs.R
 import com.jarkendar.totabs.activities.chooser.DialogCreator
 import com.jarkendar.totabs.analyzer.Analyzer
 import com.jarkendar.totabs.analyzer.MusicFileHolder
+import com.jarkendar.totabs.analyzer.Track
 import kotlinx.android.synthetic.main.activity_music_preview.*
 import java.io.File
 
@@ -82,6 +83,12 @@ class MusicPreviewActivity : AppCompatActivity() {
         beats_per_minute_editText.isEnabled = true
     }
 
+    private fun startTrackActivity(track: Track) {
+        val intent = Intent(this, TrackActivity::class.java)
+        intent.putExtra(TRACK_EXTRA_NAME, track)
+        startActivity(intent)
+    }
+
     private class AnalyzerThread constructor(val musicPreviewActivity: MusicPreviewActivity, val analyzer: Analyzer) : AsyncTask<Void, Void, String>() {
         override fun onProgressUpdate(vararg values: Void?) {
             super.onProgressUpdate(*values)
@@ -91,6 +98,7 @@ class MusicPreviewActivity : AppCompatActivity() {
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             musicPreviewActivity.enableViews()
+            musicPreviewActivity.startTrackActivity(analyzer.getTrack())
             //todo hide progress bar
         }
 
@@ -110,5 +118,6 @@ class MusicPreviewActivity : AppCompatActivity() {
     companion object {
         private const val MIN_BEATS_PER_MINUTE = 1
         private const val MAX_BEATS_PER_MINUTE = 240
+        public const val TRACK_EXTRA_NAME = "TRACK"
     }
 }
