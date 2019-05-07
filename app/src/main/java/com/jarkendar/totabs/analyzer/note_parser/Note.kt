@@ -1,6 +1,8 @@
 package com.jarkendar.totabs.analyzer.note_parser
 
-class Note constructor(val name: String, val frequency: Double) {
+import java.io.Serializable
+
+class Note constructor(val name: String, val frequency: Double) : Serializable {
 
     var amplitude: Double = 0.0
     var length = NoteLength.FULL

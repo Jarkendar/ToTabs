@@ -2,9 +2,10 @@ package com.jarkendar.totabs.analyzer
 
 import com.jarkendar.totabs.analyzer.note_parser.Note
 import com.jarkendar.totabs.analyzer.note_parser.NoteLength
+import java.io.Serializable
 import java.util.*
 
-class Track(val beatsPerMinute: Int, val minNote: NoteLength, val minNoteDuration: Double) {
+class Track(val beatsPerMinute: Int, val minNote: NoteLength, val minNoteDuration: Double) : Serializable {
 
     private var listOfSound = LinkedList<Pair<Int, Note>>()
 
