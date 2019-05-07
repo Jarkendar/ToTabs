@@ -35,6 +35,10 @@ class Analyzer constructor(private val musicFileHolder: MusicFileHolder) {
         Log.d(TAG, track.toString())
     }
 
+    public fun getTrack(): Track {
+        return track
+    }
+
     private fun calcPairNoteLengthAndPartOfSecond(sampleRate: Int, beatsPerMinute: Int): Pair<NoteLength, Double> {
         var noteInSecond = beatsPerMinute / SECONDS_IN_MINUTE * NoteLength.FULL.length//start from full notes in second
         var frequencyRecognizing = sampleRate / 2.0
