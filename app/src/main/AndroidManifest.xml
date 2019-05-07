@@ -11,6 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".activities.TrackActivity"
+            android:screenOrientation="landscape" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -25,11 +28,11 @@
         <activity
             android:name=".activities.MusicPreviewActivity"
             android:parentActivityName=".activities.ChooserSourceActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".activities.ChooserSourceActivity"
             android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".activities.SplashActivity"
             android:screenOrientation="landscape">
