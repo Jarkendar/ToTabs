@@ -49,15 +49,30 @@ class StaffDraftsman constructor(val context: Context) {
     }
 
     private fun drawPrefixBoundLine(canvas: Canvas, paint: Paint, radius: Float) {
-        canvas.drawLine(PREFIX * radius, (ABOVE_STAFF + MARGIN) * 2 * radius, PREFIX * radius, (STANDARD_STAFF + ABOVE_STAFF + MARGIN) * 2 * radius, paint)
+        canvas.drawLine(
+                PREFIX * radius,
+                (ABOVE_STAFF + MARGIN) * 2 * radius,
+                PREFIX * radius,
+                (STANDARD_STAFF + ABOVE_STAFF + MARGIN) * 2 * radius,
+                paint)
     }
 
     private fun drawSuffixBoundLine(canvas: Canvas, paint: Paint, radius: Float) {
-        canvas.drawLine(bitmapWidth - SUFFIX * radius, (ABOVE_STAFF + MARGIN) * 2 * radius, bitmapWidth - SUFFIX * radius, (STANDARD_STAFF + ABOVE_STAFF + MARGIN) * 2 * radius, paint)
+        canvas.drawLine(
+                bitmapWidth - SUFFIX * radius,
+                (ABOVE_STAFF + MARGIN) * 2 * radius,
+                bitmapWidth - SUFFIX * radius,
+                (STANDARD_STAFF + ABOVE_STAFF + MARGIN) * 2 * radius,
+                paint)
     }
 
     private fun drawStaffLine(canvas: Canvas, paint: Paint, radius: Float, numberOfLine: Int) {
-        canvas.drawLine(PREFIX * radius, (ABOVE_STAFF + MARGIN + numberOfLine) * 2 * radius, bitmapWidth - SUFFIX * radius, (ABOVE_STAFF + MARGIN + numberOfLine) * 2 * radius, paint)
+        canvas.drawLine(
+                PREFIX * radius,
+                (ABOVE_STAFF + MARGIN + numberOfLine) * 2 * radius,
+                bitmapWidth - SUFFIX * radius,
+                (ABOVE_STAFF + MARGIN + numberOfLine) * 2 * radius,
+                paint)
     }
 
     private fun drawNotes(canvas: Canvas, track: Track, radius: Float, defaultPaint: Paint) {
