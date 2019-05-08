@@ -1,13 +1,11 @@
 package com.jarkendar.totabs.draftsmen
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.text.TextPaint
 import com.jarkendar.totabs.R
 import com.jarkendar.totabs.analyzer.Track
+import com.jarkendar.totabs.analyzer.note_parser.Note
 
 class StaffDraftsman constructor(val context: Context) {
 
@@ -22,6 +20,7 @@ class StaffDraftsman constructor(val context: Context) {
         writeBPMOnCanvas(canvas, prepareTextPaint(defaultPaint), track.beatsPerMinute, radius)
         prepareStaff(canvas, defaultPaint, radius)
 
+        drawNotes(canvas, track, radius, defaultPaint)
     }
 
     private fun initSize(bitmap: Bitmap) {
@@ -59,7 +58,52 @@ class StaffDraftsman constructor(val context: Context) {
 
     private fun drawStaffLine(canvas: Canvas, paint: Paint, radius: Float, numberOfLine: Int) {
         canvas.drawLine(PREFIX * radius, (ABOVE_STAFF + MARGIN + numberOfLine) * 2 * radius, bitmapWidth - SUFFIX * radius, (ABOVE_STAFF + MARGIN + numberOfLine) * 2 * radius, paint)
+    }
 
+    private fun drawNotes(canvas: Canvas, track: Track, radius: Float, defaultPaint: Paint) {
+        var noteXPosition = FIRST_NOTE_POSITION * radius
+        val centerStaff = CENTER_OF_STAFF * 2 * radius
+
+        for (note in track.getTrack()) {
+            drawNote(canvas, note, radius, defaultPaint, noteXPosition, centerStaff)
+            noteXPosition += ONE_NOTE_AREA * radius
+        }
+    }
+
+    //todo add change height on staff note
+    private fun drawNote(canvas: Canvas, notePair: Pair<Int, Note>, radius: Float, defaultPaint: Paint, positionX: Float, centerStaff: Float) {
+        val noteLength = notePair.second.length
+
+        val dotRectF = RectF(
+                positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                centerStaff + radius,
+                positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                centerStaff - radius)
+        if (!noteLength.fill) {
+            canvas.drawOval(
+                    dotRectF,
+                    defaultPaint)
+        } else {
+            canvas.drawOval(
+                    dotRectF,
+                    prepareFillPaint(defaultPaint))
+            if (noteLength.column) {//todo column direction
+                canvas.drawLine(
+                        positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                        centerStaff,
+                        positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                        centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius,
+                        prepareColumnPaint(defaultPaint))
+                for (i in 0 until noteLength.numberOfTails) {
+                    canvas.drawLine(
+                            positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                            centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius - i * radius,
+                            positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius + TAIL_LENGTH / 2 * radius,
+                            centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius + TAIL_LENGTH * radius + i * radius,
+                            prepareColumnPaint(defaultPaint))
+                }
+            }
+        }
     }
 
     private fun prepareDefaultPaint(): Paint {
@@ -68,6 +112,19 @@ class StaffDraftsman constructor(val context: Context) {
         paint.isAntiAlias = true
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 0.0f
+        return paint
+    }
+
+    private fun prepareFillPaint(defaultPaint: Paint): Paint {
+        val paint = Paint(defaultPaint)
+        paint.style = Paint.Style.FILL
+        return paint
+    }
+
+    private fun prepareColumnPaint(defaultPaint: Paint): Paint {
+        val paint = Paint(defaultPaint)
+        paint.strokeWidth = 2.0f
+        paint.style = Paint.Style.FILL
         return paint
     }
 
@@ -80,5 +137,11 @@ class StaffDraftsman constructor(val context: Context) {
         public const val PREFIX = 7.5f
         public const val SUFFIX = 7.5f
         public const val ONE_NOTE_AREA = 6.0f
+        private const val FIRST_NOTE_POSITION = PREFIX + 3.5f
+        private const val CENTER_OF_STAFF = STANDARD_STAFF / 2 + ABOVE_STAFF + MARGIN
+
+        private const val DOT_WIDTH_RADIUS_MULTIPLIER = 1.5f
+        private const val COLUMN_HEIGHT_MULTIPLIER = 5.0f
+        private const val TAIL_LENGTH = 2.0f
     }
 }
