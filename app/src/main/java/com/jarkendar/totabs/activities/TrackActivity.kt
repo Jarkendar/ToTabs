@@ -40,7 +40,7 @@ class TrackActivity : AppCompatActivity() {
     }
 
     private fun setWidthOfImagesViews(noteRadius: Float, track: Track) {
-        val width = ((StaffDraftsman.PREFIX + track.getTrack().size * StaffDraftsman.ONE_NOTE_AREA + StaffDraftsman.SUFFIX) * noteRadius).toInt()
+        val width = ((StaffDraftsman.FIRST_NOTE_POSITION + track.getTrack().size * StaffDraftsman.ONE_NOTE_AREA + StaffDraftsman.SUFFIX) * noteRadius).toInt()
         staff_imageView.layoutParams.width = width
         tablature_imageView.layoutParams.width = width
     }
