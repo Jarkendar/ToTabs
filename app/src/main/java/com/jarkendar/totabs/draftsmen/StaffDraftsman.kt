@@ -79,6 +79,12 @@ class StaffDraftsman constructor(val context: Context) {
                 centerStaff + radius,
                 positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
                 centerStaff - radius)
+        canvas.drawLine(
+                positionX - LINE_AREA_LENGTH / 2 * radius,
+                centerStaff,
+                positionX + LINE_AREA_LENGTH / 2 * radius,
+                centerStaff,
+                defaultPaint)
         if (!noteLength.fill) {
             canvas.drawOval(
                     dotRectF,
@@ -139,6 +145,7 @@ class StaffDraftsman constructor(val context: Context) {
         public const val ONE_NOTE_AREA = 6.0f
         private const val FIRST_NOTE_POSITION = PREFIX + 3.5f
         private const val CENTER_OF_STAFF = STANDARD_STAFF / 2 + ABOVE_STAFF + MARGIN
+        private const val LINE_AREA_LENGTH = 5.0f
 
         private const val DOT_WIDTH_RADIUS_MULTIPLIER = 1.5f
         private const val COLUMN_HEIGHT_MULTIPLIER = 5.0f
