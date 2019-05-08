@@ -6,6 +6,7 @@ import android.text.TextPaint
 import com.jarkendar.totabs.R
 import com.jarkendar.totabs.analyzer.Track
 import com.jarkendar.totabs.analyzer.note_parser.Note
+import kotlin.math.abs
 
 class StaffDraftsman constructor(val context: Context) {
 
@@ -37,14 +38,13 @@ class StaffDraftsman constructor(val context: Context) {
         textPaint.textSize = context.resources.getDimension(R.dimen.text_size)
         textPaint.style = Paint.Style.FILL
         textPaint.strokeWidth = 1.0f
+        textPaint.isAntiAlias = true
         return textPaint
     }
 
     private fun prepareStaff(canvas: Canvas, paint: Paint, radius: Float) {
         drawPrefixBoundLine(canvas, paint, radius)
-        for (i in 0 until 5) {
-            drawStaffLine(canvas, paint, radius, i)
-        }
+        (0 until 5).forEach { drawStaffLine(canvas, paint, radius, it) }
         drawSuffixBoundLine(canvas, paint, radius)
     }
 
@@ -85,43 +85,66 @@ class StaffDraftsman constructor(val context: Context) {
         }
     }
 
-    //todo add change height on staff note
+    //todo draw hash before half notes
     private fun drawNote(canvas: Canvas, notePair: Pair<Int, Note>, radius: Float, defaultPaint: Paint, positionX: Float, centerStaff: Float) {
         val noteLength = notePair.second.length
+        val noteHeight = notePair.second.staffPosition * 2 * radius
 
         val dotRectF = RectF(
                 positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                centerStaff + radius,
+                centerStaff + radius - noteHeight,
                 positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                centerStaff - radius)
-        canvas.drawLine(
-                positionX - LINE_AREA_LENGTH / 2 * radius,
-                centerStaff,
-                positionX + LINE_AREA_LENGTH / 2 * radius,
-                centerStaff,
-                defaultPaint)
+                centerStaff - radius - noteHeight)
+
+        val lines = abs(notePair.second.staffPosition).toInt()
+        val direction = if (notePair.second.staffPosition >= 0) -1 else 1
+        (0..lines).forEach {
+            canvas.drawLine(
+                    positionX - LINE_AREA_LENGTH / 2 * radius,
+                    centerStaff + direction * it * 2 * radius,
+                    positionX + LINE_AREA_LENGTH / 2 * radius,
+                    centerStaff + direction * it * 2 * radius,
+                    defaultPaint)
+        }
         if (!noteLength.fill) {
             canvas.drawOval(
                     dotRectF,
-                    defaultPaint)
+                    prepareNotePaint(defaultPaint))
         } else {
             canvas.drawOval(
                     dotRectF,
                     prepareFillPaint(defaultPaint))
-            if (noteLength.column) {//todo column direction
-                canvas.drawLine(
-                        positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                        centerStaff,
-                        positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                        centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius,
-                        prepareColumnPaint(defaultPaint))
-                for (i in 0 until noteLength.numberOfTails) {
+            if (noteLength.column) {
+                if (notePair.second.staffPosition < 0) {
                     canvas.drawLine(
                             positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                            centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius - i * radius,
-                            positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius + TAIL_LENGTH / 2 * radius,
-                            centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius + TAIL_LENGTH * radius + i * radius,
+                            centerStaff - noteHeight,
+                            positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                            centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius - noteHeight,
                             prepareColumnPaint(defaultPaint))
+                    (0 until noteLength.numberOfTails).forEach {
+                        canvas.drawLine(
+                            positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                                centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius + it * radius - noteHeight,
+                            positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius + TAIL_LENGTH / 2 * radius,
+                                centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius + TAIL_LENGTH * radius - it * radius - noteHeight,
+                                prepareColumnPaint(defaultPaint))
+                    }
+                } else {
+                    canvas.drawLine(
+                            positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                            centerStaff - noteHeight,
+                            positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                            centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - noteHeight,
+                            prepareColumnPaint(defaultPaint))
+                    (0 until noteLength.numberOfTails).forEach {
+                        canvas.drawLine(
+                                positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                                centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - it * radius - noteHeight,
+                                positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius + TAIL_LENGTH / 2 * radius,
+                                centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - TAIL_LENGTH * radius - it * radius - noteHeight,
+                                prepareColumnPaint(defaultPaint))
+                    }
                 }
             }
         }
@@ -130,15 +153,21 @@ class StaffDraftsman constructor(val context: Context) {
     private fun prepareDefaultPaint(): Paint {
         val paint = Paint()
         paint.color = Color.BLACK
-        paint.isAntiAlias = true
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 0.0f
+        return paint
+    }
+
+    private fun prepareNotePaint(defaultPaint: Paint): Paint {
+        val paint = Paint(defaultPaint)
+        paint.isAntiAlias = true
         return paint
     }
 
     private fun prepareFillPaint(defaultPaint: Paint): Paint {
         val paint = Paint(defaultPaint)
         paint.style = Paint.Style.FILL
+        paint.isAntiAlias = true
         return paint
     }
 
@@ -146,6 +175,7 @@ class StaffDraftsman constructor(val context: Context) {
         val paint = Paint(defaultPaint)
         paint.strokeWidth = 2.0f
         paint.style = Paint.Style.FILL
+        paint.isAntiAlias = true
         return paint
     }
 
@@ -158,7 +188,7 @@ class StaffDraftsman constructor(val context: Context) {
         public const val PREFIX = 7.5f
         public const val SUFFIX = 7.5f
         public const val ONE_NOTE_AREA = 6.0f
-        private const val FIRST_NOTE_POSITION = PREFIX + 3.5f
+        public const val FIRST_NOTE_POSITION = PREFIX + 9.5f
         private const val CENTER_OF_STAFF = STANDARD_STAFF / 2 + ABOVE_STAFF + MARGIN
         private const val LINE_AREA_LENGTH = 5.0f
 
