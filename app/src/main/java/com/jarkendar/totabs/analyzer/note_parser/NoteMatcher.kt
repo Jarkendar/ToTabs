@@ -13,7 +13,7 @@ class NoteMatcher {
     public fun match(recognizeFrequencies: Array<Pair<Double, Double>>): Note {
         //todo match to chords, generalize note to sound
 
-        val notes = Array(recognizeFrequencies.size) { Note("null", 0.0) }
+        val notes = Array(recognizeFrequencies.size) { Note("null", 0.0, 0.0f, false) }
         for (i in 0 until recognizeFrequencies.size) {
             notes[i] = chooseLowestSEFromNotes(recognizeFrequencies[i])
         }
@@ -38,10 +38,12 @@ class NoteMatcher {
         for ((name, linkedList) in indexes) {
             var sumAmplitudes = 0.0
             val frequency = array[linkedList.first].frequency
+            val staffPosition = array[linkedList.first].staffPosition
+            val isHalfNote = array[linkedList.first].isHalfTone
             for (index in linkedList) {
                 sumAmplitudes += array[index].amplitude
             }
-            val note = Note(name, frequency)
+            val note = Note(name, frequency, staffPosition, isHalfNote)
             note.amplitude = sumAmplitudes
             list.addLast(note)
         }
@@ -73,7 +75,7 @@ class NoteMatcher {
             }
         }
         if (minErrorIndex == -1) {
-            return Note(TrackCompressor.NULL_NOTE, 0.0)
+            return Note(TrackCompressor.NULL_NOTE, 0.0, 0.0f, false)
         }
         val matchNote = notes[minErrorIndex].copy()
         matchNote.amplitude = reference.second

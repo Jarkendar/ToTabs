@@ -1,5 +1,6 @@
 package com.jarkendar.totabs.analyzer.note_parser
 
+import android.util.Log
 import java.util.*
 
 class NoteSpectreGenerator {
@@ -8,11 +9,11 @@ class NoteSpectreGenerator {
 
     init {
         val octaveSize = Octave.values().size
-        val baseOctave = Array(octaveSize) { Pair("", 0.0) }
+        val baseOctave = Array(octaveSize) { Quartet("", 0.0, 0.0f, false) }
 
         for ((i, note) in Octave.values().iterator().withIndex()) {
-            notes.add(Note(note.name, note.baseValue))
-            baseOctave[i] = Pair(note.string, note.baseValue)
+            notes.add(Note(note.name, note.baseValue, note.staffPosition, note.isHalfTone))
+            baseOctave[i] = Quartet(note.string, note.baseValue, note.staffPosition, note.isHalfTone)
         }
 
         var currentTone: Double
@@ -20,9 +21,12 @@ class NoteSpectreGenerator {
         do {
             currentTone = baseOctave[i % octaveSize].second * Math.pow(2.0, (i / octaveSize).toDouble()).toInt()
             val nextName = generateToneName(baseOctave[i % octaveSize].first, i / octaveSize + 1)
-            notes.add(Note(nextName, currentTone))
+            val position = baseOctave[i % octaveSize].third + (i / octaveSize) * 3.5f
+            Log.d("**********", "${baseOctave[i % octaveSize].third}, ${i / octaveSize}, ${baseOctave[i % octaveSize].third + (i / octaveSize) * 3.5f}")
+            notes.add(Note(nextName, currentTone, position, baseOctave[i % octaveSize].fourth))
             i++
         } while (currentTone < MAX_TONE_FREQUENCY)
+        Log.d("*********", Arrays.toString(notes.toTypedArray()))
     }
 
     /**
