@@ -1,6 +1,5 @@
 package com.jarkendar.totabs.analyzer.note_parser
 
-import android.util.Log
 import java.util.*
 
 class NoteSpectreGenerator {
@@ -22,11 +21,9 @@ class NoteSpectreGenerator {
             currentTone = baseOctave[i % octaveSize].second * Math.pow(2.0, (i / octaveSize).toDouble()).toInt()
             val nextName = generateToneName(baseOctave[i % octaveSize].first, i / octaveSize + 1)
             val position = baseOctave[i % octaveSize].third + (i / octaveSize) * 3.5f
-            Log.d("**********", "${baseOctave[i % octaveSize].third}, ${i / octaveSize}, ${baseOctave[i % octaveSize].third + (i / octaveSize) * 3.5f}")
             notes.add(Note(nextName, currentTone, position, baseOctave[i % octaveSize].fourth))
             i++
         } while (currentTone < MAX_TONE_FREQUENCY)
-        Log.d("*********", Arrays.toString(notes.toTypedArray()))
     }
 
     /**
