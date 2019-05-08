@@ -51,7 +51,7 @@ class TrackActivity : AppCompatActivity() {
 
     private fun prepareStaffImage(radius: Float): Bitmap {
         val bitmap = Bitmap.createBitmap(staff_imageView.layoutParams.width, staff_imageView.layoutParams.height, Bitmap.Config.ARGB_8888)
-        val staffDraftsman = StaffDraftsman()
+        val staffDraftsman = StaffDraftsman(applicationContext)
         staffDraftsman.drawTrack(bitmap, track, radius)
         return bitmap
     }

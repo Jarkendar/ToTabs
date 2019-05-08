@@ -1,12 +1,15 @@
 package com.jarkendar.totabs.draftsmen
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.text.TextPaint
+import com.jarkendar.totabs.R
 import com.jarkendar.totabs.analyzer.Track
 
-class StaffDraftsman {
+class StaffDraftsman constructor(val context: Context) {
 
     private var bitmapHeight: Int = 0
     private var bitmapWidth: Int = 0
@@ -16,6 +19,7 @@ class StaffDraftsman {
         val defaultPaint = prepareDefaultPaint()
         val canvas = Canvas(bitmap)
 
+        writeBPMOnCanvas(canvas, prepareTextPaint(defaultPaint), track.beatsPerMinute, radius)
         prepareStaff(canvas, defaultPaint, radius)
 
     }
@@ -23,6 +27,18 @@ class StaffDraftsman {
     private fun initSize(bitmap: Bitmap) {
         bitmapHeight = bitmap.height
         bitmapWidth = bitmap.width
+    }
+
+    private fun writeBPMOnCanvas(canvas: Canvas, textPaint: TextPaint, beatsPerMinute: Int, radius: Float) {
+        canvas.drawText("$beatsPerMinute ${context.resources.getText(R.string.beats_per_minute_shortcut)}", PREFIX / 3 * radius, (ABOVE_STAFF + MARGIN) * 2 * radius - radius, textPaint)
+    }
+
+    private fun prepareTextPaint(defaultPaint: Paint): TextPaint {
+        val textPaint = TextPaint(defaultPaint)
+        textPaint.textSize = context.resources.getDimension(R.dimen.text_size)
+        textPaint.style = Paint.Style.FILL
+        textPaint.strokeWidth = 1.0f
+        return textPaint
     }
 
     private fun prepareStaff(canvas: Canvas, paint: Paint, radius: Float) {
