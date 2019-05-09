@@ -100,8 +100,10 @@ class TrackCompressor {
         val index = array[startPoint].first
         val name = array[startPoint].second.name
         val frequency = array[startPoint].second.frequency
+        val staffPosition = array[startPoint].second.staffPosition
+        val isHalfTone = array[startPoint].second.isHalfTone
 
-        val note = Note(name, frequency)
+        val note = Note(name, frequency, staffPosition, isHalfTone)
         note.amplitude = (0 until toJoin).sumByDouble { i -> array[startPoint + i].second.amplitude }
         note.length = calcNoteLength(toJoin, array[startPoint].second.length)
         return Pair(index, note)

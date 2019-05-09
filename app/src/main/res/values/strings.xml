@@ -42,5 +42,13 @@
     <string name="default_beats_per_minute_text">60</string>
     <string name="bits_per_second_unit_text">bits per seconds</string>
 
+    <!-- Strings related to track activity -->
+    <string name="play_text">Play</string>
+    <string name="save_text">Save</string>
+    <string name="details_text">Details</string>
+    <string name="staff_image_description">Staff image</string>
+    <string name="tablature_image_description">Tablature image</string>
+    <string name="beats_per_minute_shortcut">BPM</string>
+
 
 </resources>
