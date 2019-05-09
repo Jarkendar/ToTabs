@@ -149,6 +149,34 @@ class StaffDraftsman constructor(val context: Context) {
             }
 
         }
+        if (notePair.second.isHalfTone) {
+            canvas.drawLine(
+                    positionX - 3 * radius,
+                    centerStaff - noteHeight - HASH_HEIGHT / 2 * radius,
+                    positionX - 3 * radius,
+                    centerStaff - noteHeight + HASH_HEIGHT / 2 * radius,
+                    prepareColumnPaint(defaultPaint))
+            canvas.drawLine(
+                    positionX - 2 * radius,
+                    centerStaff - noteHeight - HASH_HEIGHT / 2 * radius,
+                    positionX - 2 * radius,
+                    centerStaff - noteHeight + HASH_HEIGHT / 2 * radius,
+                    prepareColumnPaint(defaultPaint))
+            canvas.drawLine(
+                    positionX - 3.5f * radius,
+                    centerStaff - noteHeight + radius,
+                    positionX - 1.5f * radius,
+                    centerStaff - noteHeight,
+                    prepareColumnPaint(defaultPaint))
+            canvas.drawLine(
+                    positionX - 3.5f * radius,
+                    centerStaff - noteHeight,
+                    positionX - 1.5f * radius,
+                    centerStaff - noteHeight - radius,
+                    prepareColumnPaint(defaultPaint))
+
+
+        }
     }
 
     private fun prepareDefaultPaint(): Paint {
@@ -162,6 +190,7 @@ class StaffDraftsman constructor(val context: Context) {
     private fun prepareNotePaint(defaultPaint: Paint): Paint {
         val paint = Paint(defaultPaint)
         paint.isAntiAlias = true
+        paint.strokeWidth = 2.0f
         return paint
     }
 
@@ -196,5 +225,6 @@ class StaffDraftsman constructor(val context: Context) {
         private const val DOT_WIDTH_RADIUS_MULTIPLIER = 1.5f
         private const val COLUMN_HEIGHT_MULTIPLIER = 7.0f
         private const val TAIL_LENGTH = 3.0f
+        private const val HASH_HEIGHT = 3.0f
     }
 }
