@@ -114,39 +114,40 @@ class StaffDraftsman constructor(val context: Context) {
             canvas.drawOval(
                     dotRectF,
                     prepareFillPaint(defaultPaint))
-            if (noteLength.column) {
-                if (notePair.second.staffPosition < 0) {
+        }
+        if (noteLength.column) {
+            if (notePair.second.staffPosition < 0) {
+                canvas.drawLine(
+                        positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                        centerStaff - noteHeight,
+                        positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                        centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius - noteHeight,
+                        prepareColumnPaint(defaultPaint))
+                (0 until noteLength.numberOfTails).forEach {
                     canvas.drawLine(
                             positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                            centerStaff - noteHeight,
-                            positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                            centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius - noteHeight,
-                            prepareColumnPaint(defaultPaint))
-                    (0 until noteLength.numberOfTails).forEach {
-                        canvas.drawLine(
-                            positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                                centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius + it * radius - noteHeight,
+                            centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius + it * radius - noteHeight,
                             positionX + DOT_WIDTH_RADIUS_MULTIPLIER * radius + TAIL_LENGTH / 2 * radius,
-                                centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius + TAIL_LENGTH * radius - it * radius - noteHeight,
-                                prepareColumnPaint(defaultPaint))
-                    }
-                } else {
+                            centerStaff - COLUMN_HEIGHT_MULTIPLIER * radius + TAIL_LENGTH * radius - it * radius - noteHeight,
+                            prepareColumnPaint(defaultPaint))
+                }
+            } else {
+                canvas.drawLine(
+                        positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                        centerStaff - noteHeight,
+                        positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
+                        centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - noteHeight,
+                        prepareColumnPaint(defaultPaint))
+                (0 until noteLength.numberOfTails).forEach {
                     canvas.drawLine(
                             positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                            centerStaff - noteHeight,
-                            positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                            centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - noteHeight,
+                            centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - it * radius - noteHeight,
+                            positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius + TAIL_LENGTH / 2 * radius,
+                            centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - TAIL_LENGTH * radius - it * radius - noteHeight,
                             prepareColumnPaint(defaultPaint))
-                    (0 until noteLength.numberOfTails).forEach {
-                        canvas.drawLine(
-                                positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius,
-                                centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - it * radius - noteHeight,
-                                positionX - DOT_WIDTH_RADIUS_MULTIPLIER * radius + TAIL_LENGTH / 2 * radius,
-                                centerStaff + COLUMN_HEIGHT_MULTIPLIER * radius - TAIL_LENGTH * radius - it * radius - noteHeight,
-                                prepareColumnPaint(defaultPaint))
-                    }
                 }
             }
+
         }
     }
 
@@ -193,7 +194,7 @@ class StaffDraftsman constructor(val context: Context) {
         private const val LINE_AREA_LENGTH = 5.0f
 
         private const val DOT_WIDTH_RADIUS_MULTIPLIER = 1.5f
-        private const val COLUMN_HEIGHT_MULTIPLIER = 5.0f
-        private const val TAIL_LENGTH = 2.0f
+        private const val COLUMN_HEIGHT_MULTIPLIER = 7.0f
+        private const val TAIL_LENGTH = 3.0f
     }
 }
