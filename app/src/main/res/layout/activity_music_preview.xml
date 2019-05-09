@@ -50,6 +50,7 @@
         android:maxHeight="120dp"
         android:minWidth="40dp"
         android:minHeight="40dp"
+        android:text="@string/play_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
