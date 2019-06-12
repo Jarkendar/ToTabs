@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">ToTabs</string>
 
+    <!-- Strings related to splash screen -->
+    <string name="splash_screen_description">Splash screen with ToTabs logo</string>
+
     <!-- Strings related to dialog -->
     <string name="dialog_info_title_text">Information</string>
     <string name="not_write_external_permission_text">You did not allow for write external storage. Application can not see files.</string>
