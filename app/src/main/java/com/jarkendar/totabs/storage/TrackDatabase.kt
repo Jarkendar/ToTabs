@@ -1,9 +1,14 @@
 package com.jarkendar.totabs.storage
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.os.Build
 import android.util.Log
+import com.jarkendar.totabs.analyzer.Track
+import java.text.SimpleDateFormat
+import java.util.*
 
 public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(context, "TrackDatabase", null, 1) {
 
@@ -24,32 +29,92 @@ public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(
 
     private fun upgradeDatabase(sqLiteDatabase: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 1) {
-            val queryCreateTableNotes = "CREATE TABLE $TABLE_NOTES (" +
-                    "$FIELD_ROW_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "$FIELD_LIST_OF_NOTES TEXT NOT NULL, " +
-                    "$FIELD_NOTE_NAME TEXT NOT NULL, " +
-                    "$FIELD_FREQUENCY DOUBLE NOT NULL, " +
-                    "$FIELD_STAFF_POSITION FLOAT NOT NULL, " +
-                    "$FIELD_IS_HALF_TONE INTEGER DEFAULT $FALSE, " +
-                    "$FIELD_AMPLITUDE DOUBLE DEFAULT 0.0, " +
-                    "$FIELD_LENGTH DOUBLE DEFAULT $DEFAULT_NOTE_LENGTH " +
-                    ");"
-            Log.d(TAG, "create table $queryCreateTableNotes")
-            sqLiteDatabase!!.execSQL(queryCreateTableNotes)
-
             val queryCreateTableTrack = "CREATE TABLE $TABLE_TRACK (" +
                     "$FIELD_ROW_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "$FIELD_TRACK_NAME TEXT NOT NULL, " +
                     "$FIELD_BEATS_PER_MINUTE INTEGER NOT NULL, " +
                     "$FIELD_MIN_NOTE DOUBLE DEFAULT $DEFAULT_NOTE_LENGTH, " +
                     "$FIELD_MIN_NOTE_DURATION DOUBLE DEFAULT 1.0, " +
-                    "$FIELD_LIST_OF_NOTES TEXT NOT NULL, " +
-                    "FOREIGN KEY ($FIELD_LIST_OF_NOTES) REFERENCES $TABLE_NOTES($FIELD_LIST_OF_NOTES)" +
+                    "$FIELD_LIST_OF_NOTES TEXT NOT NULL " +
                     ");"
             Log.d(TAG, "create table $queryCreateTableTrack")
             sqLiteDatabase!!.execSQL(queryCreateTableTrack)
+
+            val queryCreateTableNotes = "CREATE TABLE $TABLE_NOTES (" +
+                    "$FIELD_ROW_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "$FIELD_LIST_OF_NOTES TEXT NOT NULL, " +
+                    "$FIELD_ORDER_NUMBER INTEGER NOT NULL , " +
+                    "$FIELD_NOTE_NAME TEXT NOT NULL, " +
+                    "$FIELD_FREQUENCY DOUBLE NOT NULL, " +
+                    "$FIELD_STAFF_POSITION FLOAT NOT NULL, " +
+                    "$FIELD_IS_HALF_TONE INTEGER DEFAULT $FALSE, " +
+                    "$FIELD_AMPLITUDE DOUBLE DEFAULT 0.0, " +
+                    "$FIELD_LENGTH DOUBLE DEFAULT $DEFAULT_NOTE_LENGTH, " +
+                    "FOREIGN KEY ($FIELD_LIST_OF_NOTES) REFERENCES $TABLE_TRACK($FIELD_LIST_OF_NOTES)" +
+                    ");"
+            Log.d(TAG, "create table $queryCreateTableNotes")
+            sqLiteDatabase!!.execSQL(queryCreateTableNotes)
         }
     }
+
+    public fun saveTrack(sqLiteDatabase: SQLiteDatabase?, track: Track, trackName: String) {
+        Log.d(TAG, "saving $track")
+
+        val trackID = createTrackID(trackName)
+
+        val trackContentValues = createTrackContentValues(track, trackName, trackID)
+        val listOfNotesContentValues = createNotesListContentValues(track, trackID)
+
+        Log.d(TAG, "insert track $trackContentValues")
+        sqLiteDatabase!!.insert(TABLE_TRACK, null, trackContentValues)
+
+        Log.d(TAG, "insert list of notes $listOfNotesContentValues")
+        listOfNotesContentValues.forEach { contentValues -> sqLiteDatabase!!.insert(TABLE_NOTES, null, contentValues) }
+
+        Log.d(TAG, "inserted track $track")
+    }
+
+    private fun createTrackID(trackName: String): String {
+        return trackName + SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getCurrentLocale()).format(Date())
+    }
+
+    private fun createNotesListContentValues(track: Track, trackID: String): LinkedList<ContentValues> {
+        val listOfContentValues = LinkedList<ContentValues>()
+
+        for (pair in track.getTrack()) {
+            val contentValues = ContentValues()
+            contentValues.put(FIELD_LIST_OF_NOTES, trackID)
+            contentValues.put(FIELD_ORDER_NUMBER, pair.first)
+            contentValues.put(FIELD_NOTE_NAME, pair.second.name)
+            contentValues.put(FIELD_FREQUENCY, pair.second.frequency)
+            contentValues.put(FIELD_STAFF_POSITION, pair.second.staffPosition)
+            contentValues.put(FIELD_IS_HALF_TONE, pair.second.isHalfTone)
+            contentValues.put(FIELD_AMPLITUDE, pair.second.amplitude)
+            contentValues.put(FIELD_LENGTH, pair.second.length.length)
+            listOfContentValues.addFirst(contentValues)
+        }
+        listOfContentValues.reverse()
+        return listOfContentValues
+    }
+
+    private fun getCurrentLocale(): Locale {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            context.resources.configuration.locales.get(0)
+        } else {
+            context.resources.configuration.locale
+        }
+    }
+
+    private fun createTrackContentValues(track: Track, trackName: String, listID: String): ContentValues {
+        val contentValues = ContentValues()
+        contentValues.put(FIELD_TRACK_NAME, trackName)
+        contentValues.put(FIELD_BEATS_PER_MINUTE, track.beatsPerMinute)
+        contentValues.put(FIELD_MIN_NOTE, track.minNote.length)
+        contentValues.put(FIELD_MIN_NOTE_DURATION, track.minNoteDuration)
+        contentValues.put(FIELD_LIST_OF_NOTES, listID)
+        return contentValues
+    }
+
 
 
     companion object {
@@ -72,6 +137,7 @@ public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(
         private val TABLE_NOTES: String = "TABLE_NOTES"
 
         private val FIELD_NOTE_NAME: String = "NOTE_NAME"
+        private val FIELD_ORDER_NUMBER: String = "ORDER_NUMBER"
         private val FIELD_FREQUENCY: String = "FREQUENCY"
         private val FIELD_STAFF_POSITION: String = "STAFF_POSITION"
         private val FIELD_IS_HALF_TONE: String = "IS_HALF_TONE"

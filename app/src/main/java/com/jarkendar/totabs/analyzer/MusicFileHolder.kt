@@ -9,7 +9,7 @@ import java.io.File
 
 class MusicFileHolder(public val musicFile: File, private val context: Context) {
 
-    private lateinit var name: String
+    public lateinit var name: String
     private lateinit var title: String
     private lateinit var artist: String
     private lateinit var author: String

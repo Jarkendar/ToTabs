@@ -86,6 +86,7 @@ class MusicPreviewActivity : AppCompatActivity() {
     private fun startTrackActivity(track: Track) {
         val intent = Intent(this, TrackActivity::class.java)
         intent.putExtra(TRACK_EXTRA_NAME, track)
+        intent.putExtra(TRACK_NAME, musicFileHolder.name)
         startActivity(intent)
     }
 
@@ -119,5 +120,6 @@ class MusicPreviewActivity : AppCompatActivity() {
         private const val MIN_BEATS_PER_MINUTE = 1
         private const val MAX_BEATS_PER_MINUTE = 240
         public const val TRACK_EXTRA_NAME = "TRACK"
+        public const val TRACK_NAME = "TRACK_NAME"
     }
 }
