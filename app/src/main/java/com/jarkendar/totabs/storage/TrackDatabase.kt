@@ -23,14 +23,41 @@ public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(
     }
 
     private fun upgradeDatabase(sqLiteDatabase: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        //todo create database
+        if (oldVersion < 1) {
+            val queryCreateTableNotes = "CREATE TABLE $TABLE_NOTES (" +
+                    "$FIELD_ROW_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "$FIELD_LIST_OF_NOTES TEXT NOT NULL, " +
+                    "$FIELD_NOTE_NAME TEXT NOT NULL, " +
+                    "$FIELD_FREQUENCY DOUBLE NOT NULL, " +
+                    "$FIELD_STAFF_POSITION FLOAT NOT NULL, " +
+                    "$FIELD_IS_HALF_TONE INTEGER DEFAULT $FALSE, " +
+                    "$FIELD_AMPLITUDE DOUBLE DEFAULT 0.0, " +
+                    "$FIELD_LENGTH DOUBLE DEFAULT $DEFAULT_NOTE_LENGTH " +
+                    ");"
+            Log.d(TAG, "create table $queryCreateTableNotes")
+            sqLiteDatabase!!.execSQL(queryCreateTableNotes)
 
-
+            val queryCreateTableTrack = "CREATE TABLE $TABLE_TRACK (" +
+                    "$FIELD_ROW_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "$FIELD_TRACK_NAME TEXT NOT NULL, " +
+                    "$FIELD_BEATS_PER_MINUTE INTEGER NOT NULL, " +
+                    "$FIELD_MIN_NOTE DOUBLE DEFAULT $DEFAULT_NOTE_LENGTH, " +
+                    "$FIELD_MIN_NOTE_DURATION DOUBLE DEFAULT 1.0, " +
+                    "$FIELD_LIST_OF_NOTES TEXT NOT NULL, " +
+                    "FOREIGN KEY ($FIELD_LIST_OF_NOTES) REFERENCES $TABLE_NOTES($FIELD_LIST_OF_NOTES)" +
+                    ");"
+            Log.d(TAG, "create table $queryCreateTableTrack")
+            sqLiteDatabase!!.execSQL(queryCreateTableTrack)
+        }
     }
 
 
     companion object {
         private val TAG = "********"
+
+        private val TRUE = 1
+        private val FALSE = 0
+        private val DEFAULT_NOTE_LENGTH = 1.0
 
         private val FIELD_ROW_ID: String = "_id"
 
