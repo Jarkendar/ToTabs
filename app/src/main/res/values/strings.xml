@@ -16,6 +16,8 @@
 
     <!-- Strings related to chooser source activity -->
     <string name="question_text">What do you want analyze?</string>
+    <string name="file_chooser_description">Choose music file</string>
+    <string name="microphone_description">Record sound</string>
 
     <!-- Strings related to music preview activity -->
     <string name="basic_text_default">This is default basic text</string>
