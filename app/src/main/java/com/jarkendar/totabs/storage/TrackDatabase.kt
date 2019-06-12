@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import android.util.Log
 import com.jarkendar.totabs.analyzer.Track
+import com.jarkendar.totabs.analyzer.note_parser.Note
+import com.jarkendar.totabs.analyzer.note_parser.NoteLength
 import com.jarkendar.totabs.analyzer.note_parser.Quartet
 import java.text.SimpleDateFormat
 import java.util.*
@@ -143,6 +145,45 @@ public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(
 
         Log.d(TAG, "listing track $tracksList")
         return tracksList
+    }
+
+    public fun readTrack(sqLiteDatabase: SQLiteDatabase?, trackName: String, addedDate: Date): Track? {
+        Log.d(TAG, "read track $trackName, $addedDate")
+        val cursor = sqLiteDatabase!!.query(TABLE_TRACK, arrayOf(FIELD_TRACK_NAME, FIELD_BEATS_PER_MINUTE, FIELD_MIN_NOTE, FIELD_MIN_NOTE_DURATION, FIELD_LIST_OF_NOTES, FIELD_ADDED_DATE), "$FIELD_TRACK_NAME=? AND $FIELD_ADDED_DATE=?", arrayOf(trackName, addedDate.time.toString()), null, null, null)
+        var track: Track? = null
+        if (cursor.moveToNext() && cursor.count == 1) {
+            val trackName = cursor.getString(cursor.getColumnIndex(FIELD_TRACK_NAME))
+            val beatsPerMinute = cursor.getInt(cursor.getColumnIndex(FIELD_BEATS_PER_MINUTE))
+            val minNote = cursor.getDouble(cursor.getColumnIndex(FIELD_MIN_NOTE))
+            val minNoteDuration = cursor.getDouble(cursor.getColumnIndex(FIELD_MIN_NOTE_DURATION))
+            val listOfNotesID = cursor.getString(cursor.getColumnIndex(FIELD_LIST_OF_NOTES))
+            val addedDate = Date(cursor.getLong(cursor.getColumnIndex(FIELD_ADDED_DATE)))
+            track = Track(beatsPerMinute, mapLengthToNoteLength(minNote), minNoteDuration)
+
+            val cursorList = sqLiteDatabase!!.query(TABLE_NOTES, arrayOf(FIELD_LIST_OF_NOTES, FIELD_ORDER_NUMBER, FIELD_NOTE_NAME, FIELD_FREQUENCY, FIELD_STAFF_POSITION, FIELD_IS_HALF_TONE, FIELD_AMPLITUDE, FIELD_LENGTH), "$FIELD_LIST_OF_NOTES=?", arrayOf(listOfNotesID), null, null, "$FIELD_ORDER_NUMBER DESC")
+            val listOfNotes = LinkedList<Pair<Int, Note>>()
+            while (cursorList.moveToNext()) {
+                val orderNumber = cursorList.getInt(cursorList.getColumnIndex(FIELD_ORDER_NUMBER))
+                val noteName = cursorList.getString(cursorList.getColumnIndex(FIELD_NOTE_NAME))
+                val frequency = cursorList.getDouble(cursorList.getColumnIndex(FIELD_FREQUENCY))
+                val staffPosition = cursorList.getFloat(cursorList.getColumnIndex(FIELD_STAFF_POSITION))
+                val isHalfTone = cursorList.getInt(cursorList.getColumnIndex(FIELD_IS_HALF_TONE)) == TRUE
+                val amplitude = cursorList.getDouble(cursorList.getColumnIndex(FIELD_AMPLITUDE))
+                val length = cursorList.getDouble(cursorList.getColumnIndex(FIELD_LENGTH))
+
+                val note = Note(noteName, frequency, staffPosition, isHalfTone)
+                note.amplitude = amplitude
+                note.length = mapLengthToNoteLength(length)
+                listOfNotes.addFirst(Pair(orderNumber, note))
+            }
+            track.setListOfSound(listOfNotes)
+        }
+        return track
+    }
+
+    private fun mapLengthToNoteLength(minNote: Double): NoteLength {
+        NoteLength.values().forEach { noteLength -> if (noteLength.length == minNote) return noteLength }
+        return NoteLength.FULL
     }
 
     companion object {
