@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">ToTabs</string>
 
+    <!-- Strings related to splash screen -->
+    <string name="splash_screen_description">Splash screen with ToTabs logo</string>
+
     <!-- Strings related to dialog -->
     <string name="dialog_info_title_text">Information</string>
     <string name="not_write_external_permission_text">You did not allow for write external storage. Application can not see files.</string>
@@ -13,9 +16,12 @@
     <string name="analyze_text">Analyze</string>
     <string name="library_text">Library</string>
     <string name="end_text">End</string>
+    <string name="main_logo_description">Application ToTabs logo</string>
 
     <!-- Strings related to chooser source activity -->
     <string name="question_text">What do you want analyze?</string>
+    <string name="file_chooser_description">Choose music file</string>
+    <string name="microphone_description">Record sound</string>
 
     <!-- Strings related to music preview activity -->
     <string name="basic_text_default">This is default basic text</string>
