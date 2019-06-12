@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import android.util.Log
 import com.jarkendar.totabs.analyzer.Track
+import com.jarkendar.totabs.analyzer.note_parser.Quartet
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,7 +36,8 @@ public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(
                     "$FIELD_BEATS_PER_MINUTE INTEGER NOT NULL, " +
                     "$FIELD_MIN_NOTE DOUBLE DEFAULT $DEFAULT_NOTE_LENGTH, " +
                     "$FIELD_MIN_NOTE_DURATION DOUBLE DEFAULT 1.0, " +
-                    "$FIELD_LIST_OF_NOTES TEXT NOT NULL " +
+                    "$FIELD_LIST_OF_NOTES TEXT NOT NULL, " +
+                    "$FIELD_ADDED_DATE LONG NOT NULL " +
                     ");"
             Log.d(TAG, "create table $queryCreateTableTrack")
             sqLiteDatabase!!.execSQL(queryCreateTableTrack)
@@ -112,10 +114,36 @@ public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(
         contentValues.put(FIELD_MIN_NOTE, track.minNote.length)
         contentValues.put(FIELD_MIN_NOTE_DURATION, track.minNoteDuration)
         contentValues.put(FIELD_LIST_OF_NOTES, listID)
+        contentValues.put(FIELD_ADDED_DATE, Date().time)
         return contentValues
     }
 
+    public fun listingTracks(sqLiteDatabase: SQLiteDatabase?): LinkedList<Quartet<String, Int, Long, Date>> {
+        Log.d(TAG, "listingTracks")
+        val tracksList = LinkedList<Quartet<String, Int, Long, Date>>()
+        val cursor = sqLiteDatabase!!.query(TABLE_TRACK, arrayOf(FIELD_TRACK_NAME, FIELD_BEATS_PER_MINUTE, FIELD_MIN_NOTE, FIELD_MIN_NOTE_DURATION, FIELD_LIST_OF_NOTES, FIELD_ADDED_DATE), null, null, null, null, "$FIELD_TRACK_NAME DESC")
+        while (cursor.moveToNext()) {
+            val name = cursor.getString(cursor.getColumnIndex(FIELD_TRACK_NAME))
+            val beatsPerMinute = cursor.getInt(cursor.getColumnIndex(FIELD_BEATS_PER_MINUTE))
+            val minNote = cursor.getDouble(cursor.getColumnIndex(FIELD_MIN_NOTE))
+            val minDuration = cursor.getDouble(cursor.getColumnIndex(FIELD_MIN_NOTE_DURATION))
+            val listOfNotesID = cursor.getString(cursor.getColumnIndex(FIELD_LIST_OF_NOTES))
+            val addedDate = Date(cursor.getLong(cursor.getColumnIndex(FIELD_ADDED_DATE)))
+            var duration = 0L
 
+            val cursorList = sqLiteDatabase!!.query(TABLE_NOTES, arrayOf(FIELD_LIST_OF_NOTES, FIELD_ORDER_NUMBER, FIELD_LENGTH), "$FIELD_LIST_OF_NOTES=?", arrayOf(listOfNotesID), null, null, "$FIELD_ORDER_NUMBER DESC")
+            if (cursor.moveToNext()) {
+                val lastNumber = cursorList.getInt(cursorList.getColumnIndex(FIELD_ORDER_NUMBER))
+                val lastLength = cursorList.getDouble(cursorList.getColumnIndex(FIELD_LENGTH))
+                duration = Math.floor(minDuration * (lastNumber + lastLength / minNote)).toLong()
+            }
+
+            tracksList.addFirst(Quartet(name, beatsPerMinute, duration, addedDate))
+        }
+
+        Log.d(TAG, "listing track $tracksList")
+        return tracksList
+    }
 
     companion object {
         private val TAG = "********"
@@ -133,6 +161,7 @@ public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(
         private val FIELD_MIN_NOTE: String = "MINIMAL_NOTE"
         private val FIELD_MIN_NOTE_DURATION: String = "MINIMAL_NOTE_DURATION"
         private val FIELD_LIST_OF_NOTES: String = "LIST_OF_NOTES"
+        private val FIELD_ADDED_DATE: String = "ADDED_DATE"
 
         private val TABLE_NOTES: String = "TABLE_NOTES"
 
