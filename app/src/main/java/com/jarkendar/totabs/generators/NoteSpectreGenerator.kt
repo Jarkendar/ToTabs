@@ -1,5 +1,7 @@
-package com.jarkendar.totabs.analyzer.note_parser
+package com.jarkendar.totabs.generators
 
+import com.jarkendar.totabs.Quartet
+import com.jarkendar.totabs.analyzer.note_parser.Note
 import java.util.*
 
 class NoteSpectreGenerator {

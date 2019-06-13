@@ -1,4 +1,4 @@
-package com.jarkendar.totabs.analyzer.note_parser
+package com.jarkendar.totabs
 
 class Quartet<F, S, T, R>(val first: F, val second: S, var third: T, var fourth: R) {
 

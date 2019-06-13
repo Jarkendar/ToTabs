@@ -9,9 +9,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.jarkendar.totabs.Quartet
 import com.jarkendar.totabs.R
-
-import com.jarkendar.totabs.analyzer.note_parser.Quartet
 import com.jarkendar.totabs.storage.TrackDatabase
 import java.util.*
 

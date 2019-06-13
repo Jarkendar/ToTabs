@@ -2,6 +2,7 @@ package com.jarkendar.totabs.analyzer.note_parser
 
 import android.util.Log
 import com.jarkendar.totabs.analyzer.TrackCompressor
+import com.jarkendar.totabs.generators.NoteSpectreGenerator
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.abs
