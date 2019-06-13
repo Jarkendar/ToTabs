@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.jarkendar.totabs.R
-import com.jarkendar.totabs.activities.dummy.DummyContent
+import com.jarkendar.totabs.analyzer.note_parser.Quartet
+import java.util.*
 
 class LibraryActivity : AppCompatActivity(), TrackItemFragment.OnListFragmentInteractionListener {
 
@@ -22,7 +23,7 @@ class LibraryActivity : AppCompatActivity(), TrackItemFragment.OnListFragmentInt
         }
     }
 
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
+    override fun onListFragmentInteraction(item: Quartet<String, Int, Long, Date>?) {
         Log.d(TAG, "List on click $item")
     }
 

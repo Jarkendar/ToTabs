@@ -11,8 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.jarkendar.totabs.R
 
-import com.jarkendar.totabs.activities.dummy.DummyContent
-import com.jarkendar.totabs.activities.dummy.DummyContent.DummyItem
+import com.jarkendar.totabs.analyzer.note_parser.Quartet
+import com.jarkendar.totabs.storage.TrackDatabase
+import java.util.*
 
 /**
  * A fragment representing a list of Items.
@@ -21,7 +22,6 @@ import com.jarkendar.totabs.activities.dummy.DummyContent.DummyItem
  */
 class TrackItemFragment : Fragment() {
 
-    // TODO: Customize parameters
     private var columnCount = 2
 
     private var listener: OnListFragmentInteractionListener? = null
@@ -45,7 +45,8 @@ class TrackItemFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyTrackItemRecyclerViewAdapter(DummyContent.ITEMS, listener)
+                val trackDatabase = TrackDatabase(context)
+                adapter = MyTrackItemRecyclerViewAdapter(context, trackDatabase.listingTracks(trackDatabase.readableDatabase), listener)
             }
         }
         return view
@@ -77,8 +78,7 @@ class TrackItemFragment : Fragment() {
      * for more information.
      */
     interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+        fun onListFragmentInteraction(item: Quartet<String, Int, Long, Date>?)
     }
 
     companion object {
