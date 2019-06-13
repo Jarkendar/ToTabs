@@ -9,6 +9,7 @@ import android.view.View
 import com.jarkendar.totabs.R
 import com.jarkendar.totabs.analyzer.Track
 import com.jarkendar.totabs.draftsmen.StaffDraftsman
+import com.jarkendar.totabs.draftsmen.TablatureDraftsman
 import com.jarkendar.totabs.storage.TrackDatabase
 import kotlinx.android.synthetic.main.activity_track.*
 
@@ -41,6 +42,7 @@ class TrackActivity : AppCompatActivity() {
         }
 
         setStaffImage(prepareStaffImage(radius))
+        setTablatureImage(prepareTablatureImage(radius))
     }
 
     private fun setHeightOfImagesViews() {
@@ -63,13 +65,24 @@ class TrackActivity : AppCompatActivity() {
     }
 
     private fun prepareStaffImage(radius: Float): Bitmap {
-        val bitmap = Bitmap.createBitmap(staff_imageView.layoutParams.width, staff_imageView.layoutParams.height, Bitmap.Config.ARGB_8888)
+        val bitmapStaff = Bitmap.createBitmap(staff_imageView.layoutParams.width, staff_imageView.layoutParams.height, Bitmap.Config.ARGB_8888)
         val staffDraftsman = StaffDraftsman(applicationContext)
-        staffDraftsman.drawTrack(bitmap, track, radius)
-        return bitmap
+        staffDraftsman.drawTrack(bitmapStaff, track, radius)
+        return bitmapStaff
+    }
+
+    private fun prepareTablatureImage(radius: Float): Bitmap {
+        val bitmapTablature = Bitmap.createBitmap(tablature_imageView.layoutParams.width, tablature_imageView.layoutParams.height, Bitmap.Config.ARGB_8888)
+        val tablatureDraftsman = TablatureDraftsman(applicationContext, arrayOf("e1", "b", "g", "d", "A", "E"), 24)
+        tablatureDraftsman.drawTrack(bitmapTablature, track, radius)
+        return bitmapTablature
     }
 
     private fun setStaffImage(bitmap: Bitmap) {
         staff_imageView.setImageBitmap(bitmap)
+    }
+
+    private fun setTablatureImage(bitmap: Bitmap) {
+        tablature_imageView.setImageBitmap(bitmap)
     }
 }

@@ -5,7 +5,7 @@ import java.util.*
 
 class NeckNoteGenerator constructor(val tuning: Array<String>, val maxFret: Int) {
 
-    private lateinit var neckNote: Array<Array<Pair<String, Int>>>
+    lateinit var neckNote: Array<Array<Pair<String, Int>>>
 
     init {
         val notes = NoteSpectreGenerator().getNotes()
