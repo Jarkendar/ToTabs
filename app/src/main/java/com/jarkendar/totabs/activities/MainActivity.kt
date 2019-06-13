@@ -16,6 +16,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(applicationContext, ChooserSourceActivity::class.java))
         }
 
+        library_button.setOnClickListener {
+            startActivity(Intent(applicationContext, LibraryActivity::class.java))
+        }
+
         end_button.setOnClickListener {
             finish()
         }
