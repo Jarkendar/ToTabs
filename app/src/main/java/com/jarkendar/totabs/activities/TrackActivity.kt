@@ -2,6 +2,9 @@ package com.jarkendar.totabs.activities
 
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.media.AudioFormat
+import android.media.AudioManager
+import android.media.AudioTrack
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -18,6 +21,7 @@ class TrackActivity : AppCompatActivity() {
     private lateinit var track: Track
     private lateinit var trackName: String
     private val TAG = "***trackActivity*****"
+    private lateinit var audioTrack: AudioTrack
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +44,41 @@ class TrackActivity : AppCompatActivity() {
             }
         }
 
+        play_button.setOnClickListener { v: View? ->
+            play_button.isClickable = false
+            val soundData = createMusicTrack(track)
+            audioTrack = AudioTrack(AudioManager.STREAM_MUSIC,
+                    SAMPLE_RATE,
+                    AudioFormat.CHANNEL_OUT_DEFAULT,
+                    AudioFormat.ENCODING_PCM_8BIT, soundData.size,
+                    AudioTrack.MODE_STATIC
+            )
+            audioTrack.write(soundData, 0, soundData.size)
+            audioTrack.play()
+        }
+
         setStaffImage(prepareStaffImage(radius))
+    }
+
+    private fun createMusicTrack(track: Track): ByteArray {
+        val duration = Math.ceil(track.minNoteDuration * (track.getTrack().last.first + track.getTrack().last.second.length.length / track.minNote.length)).toInt()
+        val byteArray = ByteArray(SAMPLE_RATE * duration) { 0 }
+
+        val quarterNoteTime = track.minNoteDuration / track.minNote.length
+        Log.d(TAG, "create music $duration, ${byteArray.size}, $quarterNoteTime")
+        var i = 0
+        for (pair in track.getTrack()) {
+            for (sample in 0..(quarterNoteTime * pair.second.length.length * SAMPLE_RATE).toInt()) {
+                val freqMultiplySample = pair.second.frequency * sample
+                byteArray[i++] = ((Math.sin(freqMultiplySample * TWO_PI_DIV_SAMPLE_FIRST)
+                        + Math.sin(freqMultiplySample * TWO_PI_DIV_SAMPLE_SECOND) / 2
+                        + Math.sin(freqMultiplySample * TWO_PI_DIV_SAMPLE_THIRD) / 3
+                        + Math.sin(freqMultiplySample * TWO_PI_DIV_SAMPLE_FOURTH) / 4)
+                        * 255).toByte()
+            }
+        }
+        Log.d(TAG, "end create music $i")
+        return byteArray
     }
 
     private fun setHeightOfImagesViews() {
@@ -71,5 +109,13 @@ class TrackActivity : AppCompatActivity() {
 
     private fun setStaffImage(bitmap: Bitmap) {
         staff_imageView.setImageBitmap(bitmap)
+    }
+
+    companion object {
+        private val SAMPLE_RATE = 44100
+        private val TWO_PI_DIV_SAMPLE_FIRST = 2 * Math.PI / SAMPLE_RATE
+        private val TWO_PI_DIV_SAMPLE_SECOND = 2 * Math.PI / SAMPLE_RATE * 2
+        private val TWO_PI_DIV_SAMPLE_THIRD = 2 * Math.PI / SAMPLE_RATE * 3
+        private val TWO_PI_DIV_SAMPLE_FOURTH = 2 * Math.PI / SAMPLE_RATE * 4
     }
 }

@@ -106,7 +106,7 @@ class ChooserSourceActivity : AppCompatActivity(), FileChooser.FileSelectedListe
     }
 
     companion object {
-        private val EXTENSIONS_LIST = arrayOf(".3gp", ".mp3", ".flac", ".mid", ".wav", ".ogg", ".mp4")
+        private val EXTENSIONS_LIST = arrayOf(".wav")//arrayOf(".3gp", ".mp3", ".flac", ".mid", ".wav", ".ogg", ".mp4")
         private const val PERMISSION_REQUEST_EXTERNAL_STORAGE = 2
         private const val RECORD_REQUEST = 3
         public const val EXTRA_FILE = "extra_file"
