@@ -134,10 +134,10 @@ public class TrackDatabase constructor(val context: Context) : SQLiteOpenHelper(
             var duration = 0L
 
             val cursorList = sqLiteDatabase!!.query(TABLE_NOTES, arrayOf(FIELD_LIST_OF_NOTES, FIELD_ORDER_NUMBER, FIELD_LENGTH), "$FIELD_LIST_OF_NOTES=?", arrayOf(listOfNotesID), null, null, "$FIELD_ORDER_NUMBER DESC")
-            if (cursor.moveToNext()) {
+            if (cursorList.moveToNext()) {
                 val lastNumber = cursorList.getInt(cursorList.getColumnIndex(FIELD_ORDER_NUMBER))
                 val lastLength = cursorList.getDouble(cursorList.getColumnIndex(FIELD_LENGTH))
-                duration = Math.floor(minDuration * (lastNumber + lastLength / minNote)).toLong()
+                duration = Math.floor(minDuration * (lastNumber + lastLength / minNote) * 1000).toLong()
             }
 
             tracksList.addFirst(Quartet(name, beatsPerMinute, duration, addedDate))
