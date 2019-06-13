@@ -1,4 +1,4 @@
-package com.jarkendar.totabs.analyzer.note_parser
+package com.jarkendar.totabs.generators
 
 //Values source : http://www.michalkaszczyszyn.com/pl/lessons/notes.html
 

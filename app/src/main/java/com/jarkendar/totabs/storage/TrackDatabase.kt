@@ -6,10 +6,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import android.util.Log
+import com.jarkendar.totabs.Quartet
 import com.jarkendar.totabs.analyzer.Track
 import com.jarkendar.totabs.analyzer.note_parser.Note
 import com.jarkendar.totabs.analyzer.note_parser.NoteLength
-import com.jarkendar.totabs.analyzer.note_parser.Quartet
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import com.jarkendar.totabs.R
 import com.jarkendar.totabs.analyzer.Track
 import com.jarkendar.totabs.draftsmen.StaffDraftsman
+import com.jarkendar.totabs.draftsmen.TablatureDraftsman
 import com.jarkendar.totabs.storage.TrackDatabase
 import kotlinx.android.synthetic.main.activity_track.*
 
@@ -40,7 +42,18 @@ class TrackActivity : AppCompatActivity() {
             }
         }
 
+        tuning_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                setTablatureImage(prepareTablatureImage(getNoteRadius()))
+            }
+        }
+
         setStaffImage(prepareStaffImage(radius))
+        setTablatureImage(prepareTablatureImage(radius))
     }
 
     private fun setHeightOfImagesViews() {
@@ -63,13 +76,24 @@ class TrackActivity : AppCompatActivity() {
     }
 
     private fun prepareStaffImage(radius: Float): Bitmap {
-        val bitmap = Bitmap.createBitmap(staff_imageView.layoutParams.width, staff_imageView.layoutParams.height, Bitmap.Config.ARGB_8888)
+        val bitmapStaff = Bitmap.createBitmap(staff_imageView.layoutParams.width, staff_imageView.layoutParams.height, Bitmap.Config.ARGB_8888)
         val staffDraftsman = StaffDraftsman(applicationContext)
-        staffDraftsman.drawTrack(bitmap, track, radius)
-        return bitmap
+        staffDraftsman.drawTrack(bitmapStaff, track, radius)
+        return bitmapStaff
+    }
+
+    private fun prepareTablatureImage(radius: Float): Bitmap {
+        val bitmapTablature = Bitmap.createBitmap(tablature_imageView.layoutParams.width, tablature_imageView.layoutParams.height, Bitmap.Config.ARGB_8888)
+        val tablatureDraftsman = TablatureDraftsman(applicationContext, tuning_spinner.selectedItem.toString().split(" ").toTypedArray(), 24)
+        tablatureDraftsman.drawTrack(bitmapTablature, track, radius)
+        return bitmapTablature
     }
 
     private fun setStaffImage(bitmap: Bitmap) {
         staff_imageView.setImageBitmap(bitmap)
+    }
+
+    private fun setTablatureImage(bitmap: Bitmap) {
+        tablature_imageView.setImageBitmap(bitmap)
     }
 }

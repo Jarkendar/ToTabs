@@ -55,6 +55,12 @@
     <string name="staff_image_description">Staff image</string>
     <string name="tablature_image_description">Tablature image</string>
     <string name="beats_per_minute_shortcut">BPM</string>
+    <string name="tuning_text">Tuning:</string>
+    <string-array name="tunings">
+        <item>e1 b g d A E</item>
+        <item>e1 b g d A D</item>
+        <item>dis1 b fis cis Gis Dis</item>
+    </string-array>
 
     <!-- Strings related to fragment item -->
     <string name="default_track_name_text">Default track name</string>
