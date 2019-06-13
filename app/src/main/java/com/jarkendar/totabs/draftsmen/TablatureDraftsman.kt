@@ -37,7 +37,7 @@ class TablatureDraftsman constructor(val context: Context, val tuning: Array<Str
     }
 
     private fun writeTuningOnCanvas(canvas: Canvas, textPaint: TextPaint, tuning: Array<String>, radius: Float) {
-        (0 until tuning.size).forEach { i -> canvas.drawText(tuning[i], PREFIX / 1.5f * radius, firstLineY + 2 * radius * i + radius, textPaint) }
+        (0 until tuning.size).forEach { i -> canvas.drawText(tuning[i], PREFIX / 2.5f * radius, firstLineY + 2 * radius * i + radius, textPaint) }
     }
 
     private fun prepareTablature(canvas: Canvas, defaultPaint: Paint, radius: Float, tuning: Array<String>) {

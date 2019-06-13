@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import com.jarkendar.totabs.R
 import com.jarkendar.totabs.analyzer.Track
 import com.jarkendar.totabs.draftsmen.StaffDraftsman
@@ -41,6 +42,16 @@ class TrackActivity : AppCompatActivity() {
             }
         }
 
+        tuning_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                setTablatureImage(prepareTablatureImage(getNoteRadius()))
+            }
+        }
+
         setStaffImage(prepareStaffImage(radius))
         setTablatureImage(prepareTablatureImage(radius))
     }
@@ -73,7 +84,7 @@ class TrackActivity : AppCompatActivity() {
 
     private fun prepareTablatureImage(radius: Float): Bitmap {
         val bitmapTablature = Bitmap.createBitmap(tablature_imageView.layoutParams.width, tablature_imageView.layoutParams.height, Bitmap.Config.ARGB_8888)
-        val tablatureDraftsman = TablatureDraftsman(applicationContext, arrayOf("e1", "b", "g", "d", "A", "E"), 24)
+        val tablatureDraftsman = TablatureDraftsman(applicationContext, tuning_spinner.selectedItem.toString().split(" ").toTypedArray(), 24)
         tablatureDraftsman.drawTrack(bitmapTablature, track, radius)
         return bitmapTablature
     }
