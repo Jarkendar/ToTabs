@@ -19,7 +19,7 @@ import java.util.*
 
 class MyTrackItemRecyclerViewAdapter(
         private val context: Context,
-        private val mValues: LinkedList<Quartet<String, Int, Long, Date>>,
+        private var mValues: LinkedList<Quartet<String, Int, Long, Date>>,
         private val mListener: OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<MyTrackItemRecyclerViewAdapter.ViewHolder>() {
 
@@ -32,6 +32,10 @@ class MyTrackItemRecyclerViewAdapter(
             // one) that an item has been selected.
             mListener?.onListFragmentInteraction(item)
         }
+    }
+
+    public fun setList(quartets: LinkedList<Quartet<String, Int, Long, Date>>) {
+        mValues = quartets
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

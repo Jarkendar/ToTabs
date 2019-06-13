@@ -21,6 +21,7 @@ class TrackItemFragment : Fragment() {
     private var columnCount = 2
 
     private var listener: OnListFragmentInteractionListener? = null
+    private var recyclerView: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +36,7 @@ class TrackItemFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_trackitem_list, container, false)
 
         if (view is RecyclerView) {
+            recyclerView = view
             with(view) {
                 layoutManager = when {
                     columnCount <= 1 -> LinearLayoutManager(context)
@@ -45,6 +47,16 @@ class TrackItemFragment : Fragment() {
             }
         }
         return view
+    }
+
+    public fun refreshAdapter() {
+        (recyclerView!!.adapter as MyTrackItemRecyclerViewAdapter).setList(readTaskList())
+        recyclerView!!.adapter.notifyDataSetChanged()
+    }
+
+    private fun readTaskList(): LinkedList<Quartet<String, Int, Long, Date>> {
+        val trackDatabase = TrackDatabase(context!!)
+        return trackDatabase.listingTracks(trackDatabase.readableDatabase)
     }
 
     override fun onAttach(context: Context) {

@@ -45,6 +45,11 @@ class LibraryActivity : AppCompatActivity(), TrackItemFragment.OnListFragmentInt
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        trackItemFragment.refreshAdapter()
+    }
+
     companion object {
         private val TAG = "*******"
     }
