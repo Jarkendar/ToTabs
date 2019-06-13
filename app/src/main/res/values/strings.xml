@@ -56,5 +56,11 @@
     <string name="tablature_image_description">Tablature image</string>
     <string name="beats_per_minute_shortcut">BPM</string>
 
+    <!-- Strings related to fragment item -->
+    <string name="default_track_name_text">Default track name</string>
+    <string name="prefix_duration_text">Duration:</string>
+    <string name="prefix_beats_per_minute_text">BPM:</string>
+    <string name="prefix_added_date_text">Added date:</string>
+
 
 </resources>

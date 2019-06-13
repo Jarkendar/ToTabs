@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/logo_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.LibraryActivity"></activity>
         <activity
             android:name=".activities.TrackActivity"
             android:screenOrientation="landscape" />

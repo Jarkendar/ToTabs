@@ -5,15 +5,18 @@ import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import com.jarkendar.totabs.R
 import com.jarkendar.totabs.analyzer.Track
 import com.jarkendar.totabs.draftsmen.StaffDraftsman
+import com.jarkendar.totabs.storage.TrackDatabase
 import kotlinx.android.synthetic.main.activity_track.*
 
 
 class TrackActivity : AppCompatActivity() {
 
     private lateinit var track: Track
+    private lateinit var trackName: String
     private val TAG = "***trackActivity*****"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,10 +25,20 @@ class TrackActivity : AppCompatActivity() {
 
         track = intent.extras.getSerializable(MusicPreviewActivity.TRACK_EXTRA_NAME) as Track
         Log.d(TAG, track.toString())
+        trackName = intent.extras.getString(MusicPreviewActivity.TRACK_NAME)
+        Log.d(TAG, trackName)
 
         setHeightOfImagesViews()
         val radius = getNoteRadius()
         setWidthOfImagesViews(radius, track)
+
+        save_button.setOnClickListener { v: View? ->
+            //todo check in database if exist show info
+            val trackDatabase = TrackDatabase(applicationContext)
+            synchronized(applicationContext) {
+                trackDatabase.saveTrack(trackDatabase.writableDatabase, track, trackName)
+            }
+        }
 
         setStaffImage(prepareStaffImage(radius))
     }
