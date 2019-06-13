@@ -12,6 +12,7 @@ import com.jarkendar.totabs.analyzer.Track
 import com.jarkendar.totabs.analyzer.note_parser.Note
 import com.jarkendar.totabs.generators.NeckNoteGenerator
 import java.util.*
+import kotlin.math.abs
 
 class TablatureDraftsman constructor(val context: Context, val tuning: Array<String>, val maxFret: Int) {
 
@@ -105,7 +106,7 @@ class TablatureDraftsman constructor(val context: Context, val tuning: Array<Str
                 if (neckNote[i][j].first == note.name) pairsList.addFirst(Pair(i, j))
             }
         }
-        return pairsList.minBy { pair -> pair.second } ?: Pair(-1, -1)
+        return pairsList.minBy { pair -> abs(pair.second - CENTER_FRET) } ?: Pair(-1, -1)
     }
 
     private fun initSize(bitmap: Bitmap) {
@@ -146,6 +147,8 @@ class TablatureDraftsman constructor(val context: Context, val tuning: Array<Str
         public const val SUFFIX = 7.5f
         public const val ONE_NOTE_AREA = 6.0f
         public const val FIRST_NOTE_POSITION = PREFIX + 9.5f
+
+        public const val CENTER_FRET = 7
 
 
     }
